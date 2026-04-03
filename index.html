@@ -22,7 +22,7 @@
   --shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); transition: background var(--tr), color var(--tr); min-height: 100vh; display: flex; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); transition: background var(--tr), color var(--tr); min-height: 100vh; display: flex; overflow-x: hidden; }
 h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; }
 
 /* SIDEBAR */
@@ -40,44 +40,30 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; }
 .header-area { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
 .greeting h1 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
 .greeting p { font-size: 14px; opacity: 0.7; font-weight: 600; }
-.quote-box { background: var(--primary-glow); padding: 12px 20px; border-radius: 8px; border-left: 3px solid var(--primary); font-size: 13px; font-style: italic; font-weight: 600; max-width: 400px; text-align: right; }
 
 /* CARDS & GRIDS */
 .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 24px; box-shadow: var(--shadow); margin-bottom: 24px; transition: var(--tr); }
-.card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(26,35,126,0.12); }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
-/* PROGRESS & STATS */
-.stat-title { font-size: 13px; font-weight: 700; color: var(--text); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.stat-value { font-size: 32px; font-weight: 800; color: var(--primary); font-family: 'Rajdhani', sans-serif; }
-.progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 12px; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light), var(--accent)); width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; }
+/* BUTTONS */
+.btn-primary { background: var(--primary); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: var(--tr); }
+.btn-primary:hover { background: var(--primary-light); }
+.btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
 
-/* STREAK TRACKER */
-.streak-grid { display: flex; gap: 8px; margin-top: 12px; }
-.streak-day { width: 32px; height: 32px; border-radius: 8px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; transition: var(--tr); cursor: pointer; }
-.streak-day.active { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(27,94,32,0.3); }
+/* EDITORIAL MODAL */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+.modal-content { background: var(--card); padding: 30px; border-radius: var(--radius); width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.close-btn { position: absolute; top: 20px; right: 20px; background: var(--primary-glow); border: none; font-size: 20px; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: var(--text); }
 
-/* POMODORO TIMER */
-.timer-display { font-size: 64px; font-weight: 800; font-family: 'Rajdhani', sans-serif; color: var(--text); text-align: center; margin: 20px 0; }
-.timer-controls { display: flex; justify-content: center; gap: 12px; }
-.btn-primary { background: var(--primary); color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: var(--tr); }
-.btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
-.btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 10px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-
-/* SYLLABUS LIST */
-.topic-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid var(--border); transition: var(--tr); border-radius: 8px; }
-.topic-item:hover { background: var(--primary-glow); }
-.custom-checkbox { width: 20px; height: 20px; border: 2px solid var(--primary-light); border-radius: 4px; cursor: pointer; transition: var(--tr); appearance: none; display: flex; align-items: center; justify-content: center; }
-.custom-checkbox:checked { background: var(--primary); border-color: var(--primary); }
-.custom-checkbox:checked::after { content: "✓"; color: white; font-size: 12px; font-weight: bold; }
-.topic-text { font-size: 15px; font-weight: 600; flex: 1; }
-.topic-item:has(> .custom-checkbox:checked) .topic-text { text-decoration: line-through; opacity: 0.5; }
-
-/* ANALYTICS BARS */
-.bar-row { margin-bottom: 12px; }
-.bar-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+/* TIMETABLE TREE */
+.tree-container { background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+details { margin-bottom: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+summary { padding: 15px; font-weight: 700; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; background: var(--primary-glow); color: var(--primary); }
+summary::-webkit-details-marker { display: none; }
+.tree-content { padding: 15px; border-top: 1px solid var(--border); }
+.month-box { margin-bottom: 15px; border-left: 3px solid var(--accent); padding-left: 15px; }
+.day-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+.day-item:last-child { border-bottom: none; }
 </style>
 </head>
 <body>
@@ -89,9 +75,8 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; }
   </div>
   <nav>
     <button class="btn-tab active" onclick="showTab('dash')">📊 Command Center</button>
-    <button class="btn-tab" onclick="showTab('study')">⏱️ Focus Hub</button>
-    <button class="btn-tab" onclick="showTab('news')">📰 Intel & Editorials</button>
-    <button class="btn-tab" onclick="showTab('syl')">📚 Syllabus Matrix</button>
+    <button class="btn-tab" onclick="showTab('news')">📰 Daily Editorials</button>
+    <button class="btn-tab" onclick="showTab('timetable')">🗓️ Master Timetable</button>
   </nav>
   <button class="btn-tab theme-toggle" onclick="toggleTheme()">🌓 Dark Mode</button>
 </aside>
@@ -100,95 +85,22 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; }
   <div class="header-area">
     <div class="greeting">
       <h1 id="greetText">Good Morning, Aspirant.</h1>
-      <p>Target Age: 41 | Consistency is the ultimate weapon.</p>
-    </div>
-    <div class="quote-box">
-      "It’s not about how much we lost. It’s about how much we have left. Whatever it takes."
+      <p>Mission 2026 | Age 41 | Consistency is key.</p>
     </div>
   </div>
 
   <div id="dash" class="tab-content">
-    <div class="grid-3">
-      <div class="card">
-        <div class="stat-title">Master Syllabus Covered</div>
-        <div class="stat-value" id="progressText">0%</div>
-        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
-      </div>
-      <div class="card">
-        <div class="stat-title">Today's Priority Target</div>
-        <div class="stat-value" style="font-size: 20px; margin-top: 5px; color: var(--accent);" id="todayTarget">Loading...</div>
-      </div>
-      <div class="card">
-        <div class="stat-title">7-Day Consistency Streak</div>
-        <div class="streak-grid">
-          <div class="streak-day active">M</div>
-          <div class="streak-day active">T</div>
-          <div class="streak-day active">W</div>
-          <div class="streak-day">T</div>
-          <div class="streak-day">F</div>
-          <div class="streak-day">S</div>
-          <div class="streak-day">S</div>
+    <div class="card">
+      <h3>Today's Focus: 3-Hour Protocol</h3>
+      <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="padding: 12px; background: var(--bg); border-left: 3px solid var(--primary); border-radius: 6px;">
+          <strong>Hour 1: Static Core (Polity)</strong> - Functions & Responsibilities of Union and States
         </div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h3 style="margin-bottom: 20px;">Paper-wise Strengths</h3>
-        <div class="bar-row">
-          <div class="bar-label"><span>GS 1 (History/Geo)</span> <span>65%</span></div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 65%; background: #3949ab;"></div></div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label"><span>GS 2 (Polity/Gov)</span> <span>80%</span></div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 80%; background: #e65100;"></div></div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label"><span>GS 3 (Economy/SaaS/Tech)</span> <span>45%</span></div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 45%; background: #1b5e20;"></div></div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label"><span>GS 4 (Ethics)</span> <span>30%</span></div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 30%; background: #6a1b9a;"></div></div>
-        </div>
-      </div>
-
-      <div class="card" style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white;">
-        <h3 style="color: white; margin-bottom: 10px;">Daily Readiness</h3>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-weight: 600; font-size: 14px;">
-          <li><input type="checkbox" style="margin-right:8px;" checked> Review Current Affairs</li>
-          <li><input type="checkbox" style="margin-right:8px;"> 1 PyQ Answer Written</li>
-          <li><input type="checkbox" style="margin-right:8px;"> 45m Physical Training (Volleyball/Cardio)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div id="study" class="tab-content" style="display:none;">
-    <div class="grid-2">
-      <div class="card" style="text-align: center; display: flex; flex-direction: column; justify-content: center;">
-        <h3 style="color: var(--primary);">Intense Focus Session</h3>
-        <p style="font-size: 13px; opacity: 0.7;">Block out distractions. 50 mins work, 10 mins rest.</p>
-        <div class="timer-display" id="timer">50:00</div>
-        <div class="timer-controls">
-          <button class="btn-primary" onclick="toggleTimer()" id="timerBtn">Start Deep Work</button>
-          <button class="btn-outline" onclick="resetTimer()">Reset</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-bottom: 15px;">3-Hour Protocol</h3>
-        <div style="padding: 12px; background: var(--bg); border-left: 3px solid var(--primary); border-radius: 6px; margin-bottom: 10px;">
-          <strong style="font-size: 14px;">Hour 1: Static Core</strong>
-          <div style="font-size: 12px; margin-top: 4px;">Deep dive into GS-2 (Constitution & Governance).</div>
-        </div>
-        <div style="padding: 12px; background: var(--bg); border-left: 3px solid var(--accent); border-radius: 6px; margin-bottom: 10px;">
-          <strong style="font-size: 14px;">Hour 2: Dynamic / Editorials</strong>
-          <div style="font-size: 12px; margin-top: 4px;">Link daily news to syllabus. Extract case studies.</div>
+        <div style="padding: 12px; background: var(--bg); border-left: 3px solid var(--accent); border-radius: 6px;">
+          <strong>Hour 2: Dynamic (Editorial Analysis)</strong> - Read today's editorial and extract 3 key points.
         </div>
         <div style="padding: 12px; background: var(--bg); border-left: 3px solid var(--success); border-radius: 6px;">
-          <strong style="font-size: 14px;">Hour 3: Mains Execution</strong>
-          <div style="font-size: 12px; margin-top: 4px;">Write 2 answers. Analyze structure and presentation.</div>
+          <strong>Hour 3: Mains Answer Writing</strong> - Previous Year Question Practice.
         </div>
       </div>
     </div>
@@ -196,59 +108,123 @@ h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; }
 
   <div id="news" class="tab-content" style="display:none;">
     <div class="card">
-      <h3 style="margin-bottom: 20px;">High-Yield Analysis</h3>
-      <div class="topic-item" style="flex-direction: column; align-items: flex-start;">
-        <div style="font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase;">GS-2 | e-Governance</div>
-        <div class="topic-text" style="font-size: 18px; margin: 4px 0;">Role of SaaS platforms in ensuring transparency in government procurement (Tenders).</div>
-        <p style="font-size: 13px; opacity: 0.8; margin-top: 8px;">Analysis of how digitized queue management and open-access portals eliminate bureaucratic red tape...</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>High-Yield Editorials</h3>
+        <button class="btn-primary" onclick="loadNextEditorial()">🔄 Next Editorial</button>
       </div>
-      <div class="topic-item" style="flex-direction: column; align-items: flex-start; margin-top: 15px;">
-        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase;">GS-3 | Infrastructure</div>
-        <div class="topic-text" style="font-size: 18px; margin: 4px 0;">Assessing the economic impact of Defence Corridors in Uttar Pradesh.</div>
-        <p style="font-size: 13px; opacity: 0.8; margin-top: 8px;">Reviewing strategic investments and their trickle-down effect on MSMEs in the region...</p>
+      
+      <div id="editorialPreview" style="background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+        <div style="font-size: 12px; font-weight: 800; color: var(--accent); text-transform: uppercase;" id="edRel">GS-2 | E-Governance</div>
+        <h2 style="margin: 10px 0; color: var(--primary);" id="edTitle">Loading...</h2>
+        <p style="font-size: 15px; opacity: 0.8; line-height: 1.6; margin-bottom: 20px;" id="edExcerpt">Loading excerpt...</p>
+        <button class="btn-outline" onclick="openModal()">📖 Read Full Editorial</button>
       </div>
     </div>
   </div>
 
-  <div id="syl" class="tab-content" style="display:none;">
+  <div id="timetable" class="tab-content" style="display:none;">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3>Master Topic Tracker</h3>
-        <span style="font-size: 12px; font-weight: 700; background: var(--primary-glow); padding: 4px 12px; border-radius: 20px;">UPPSC Mains Format</span>
+      <h3 style="margin-bottom: 20px;">Comprehensive Preparation Plan</h3>
+      
+      <div class="tree-container">
+        <details>
+          <summary>📁 Year 2025: Foundation & Core Building</summary>
+          <div class="tree-content">
+            
+            <div class="month-box">
+              <h4 style="color: var(--primary); margin-bottom: 10px;">April: Indian Polity (GS-2)</h4>
+              <div class="day-item"><strong>Day 1-5:</strong> <span>Historical Background & Making of Constitution</span></div>
+              <div class="day-item"><strong>Day 6-10:</strong> <span>Salient Features, Preamble, Part I-IV</span></div>
+              <div class="day-item"><strong>Day 11-15:</strong> <span>Union & State Executive (President, Governor)</span></div>
+              <div class="day-item"><strong>Day 16-20:</strong> <span>Parliament & State Legislature (Adam Branch focus)</span></div>
+              <div class="day-item"><strong>Day 21-30:</strong> <span>Judiciary, Panchayati Raj, E-Governance SaaS integration</span></div>
+            </div>
+
+            <div class="month-box">
+              <h4 style="color: var(--primary); margin-bottom: 10px;">May: Geography & Environment (GS-1 & 3)</h4>
+              <div class="day-item"><strong>Day 1-10:</strong> <span>Physical Geography of World & India</span></div>
+              <div class="day-item"><strong>Day 11-20:</strong> <span>UP Specific Geography, Climate, and Rivers</span></div>
+              <div class="day-item"><strong>Day 21-31:</strong> <span>Disaster Management & Environment Protection</span></div>
+            </div>
+
+          </div>
+        </details>
+
+        <details open>
+          <summary>📁 Year 2026: Pre-to-Mains Execution (The SDM Year)</summary>
+          <div class="tree-content">
+            
+            <div class="month-box">
+              <h4 style="color: var(--primary); margin-bottom: 10px;">Jan - March: Prelims Intense</h4>
+              <div class="day-item"><strong>Daily:</strong> <span>100 MCQs + CSAT Practice</span></div>
+              <div class="day-item"><strong>Weekly:</strong> <span>Full Length Mock Test</span></div>
+              <div class="day-item"><strong>Current Affairs:</strong> <span>Last 12 Months Compilation</span></div>
+            </div>
+
+            <div class="month-box">
+              <h4 style="color: var(--primary); margin-bottom: 10px;">June - August: Mains Answer Writing</h4>
+              <div class="day-item"><strong>GS 1 & 2:</strong> <span>History, Society, Polity, IR</span></div>
+              <div class="day-item"><strong>GS 3 & 4:</strong> <span>Economy, Tech (Tender/SaaS), Ethics Case Studies</span></div>
+              <div class="day-item"><strong>GS 5 & 6:</strong> <span>UP Special Deep Dive</span></div>
+            </div>
+
+          </div>
+        </details>
+
       </div>
-      <div id="syllabusContainer"></div>
     </div>
   </div>
+
 </main>
+
+<div class="modal-overlay" id="edModal">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal()">×</button>
+    <div style="font-size: 12px; font-weight: 800; color: var(--accent); margin-bottom: 10px;" id="modalRel">Rel</div>
+    <h2 style="color: var(--primary); margin-bottom: 15px;" id="modalTitle">Title</h2>
+    <div style="font-size: 12px; opacity: 0.6; margin-bottom: 20px;" id="modalSource">Source</div>
+    <div style="font-size: 16px; line-height: 1.8; color: var(--text);" id="modalBody">
+      Content goes here...
+    </div>
+  </div>
+</div>
 
 <script>
 // ==========================================
-// CORE DATA
+// EDITORIAL DATABASE
 // ==========================================
-const masterSyllabus = [
-  { topic: "Historical background and making of the Constitution", done: true },
-  { topic: "Salient features of the Indian Constitution", done: true },
-  { topic: "Functions and responsibilities of the Union and States", done: false },
-  { topic: "Separation of powers and dispute redressal mechanisms", done: false },
-  { topic: "E-governance applications, models, successes, and limitations", done: false },
-  { topic: "Role of Civil Services in a democracy", done: false },
-  { topic: "Issues relating to poverty and hunger in UP", done: false },
-  { topic: "Ethics in public administration and corporate governance", done: false }
+const editorials = [
+  {
+    title: "The Role of SaaS in Transforming E-Governance in UP",
+    rel: "GS-2 | E-Governance & Transparency",
+    source: "The Hindu - Editorial Analysis",
+    excerpt: "How automated systems like Tender Mitra are reducing bureaucratic delays and bringing transparency to government procurement...",
+    body: "<p>The integration of Software as a Service (SaaS) platforms within the administrative framework of Uttar Pradesh marks a significant shift towards transparent governance.</p><p>Historically, government procurement and tender allocation have been plagued by red tape and opacity. By digitizing these queues and automating GST invoice generation, platforms ensure that MSMEs and independent contractors have a level playing field.</p><p><strong>Key Takeaways for Mains:</strong><br>1. Mention Article 14 (Equality) in the context of equal opportunity in government contracts.<br>2. Highlight how digital trails prevent corruption (Probity in Governance - GS4).</p>"
+  },
+  {
+    title: "Cooperative Federalism: Challenges in Revenue Sharing",
+    rel: "GS-2 | Indian Constitution",
+    source: "Indian Express - Explained",
+    excerpt: "Analyzing the friction between the Centre and States regarding GST compensation and the role of the Finance Commission...",
+    body: "<p>Cooperative federalism requires a balance of power and resources. Recent debates have highlighted the strain on state finances, particularly in large states like UP.</p><p>The 16th Finance Commission's recommendations will be crucial in determining how devolution occurs. States argue for a higher percentage of the divisible pool to manage local infrastructure and welfare schemes.</p><p><strong>Mains Approach:</strong> Analyze the changing dynamics of the Inter-State Council and the practical implications of central schemes on state budgets.</p>"
+  },
+  {
+    title: "Climate Resilience in the Indo-Gangetic Plain",
+    rel: "GS-3 | Environment & Disaster Management",
+    source: "Down To Earth",
+    excerpt: "The impact of unseasonal heatwaves on the wheat yield in Western UP and necessary adaptive strategies...",
+    body: "<p>The agricultural backbone of Uttar Pradesh is facing a severe threat from changing climate patterns. Unseasonal heatwaves during the grain-filling stage of wheat have led to reduced yields.</p><p>There is an urgent need for climate-resilient agriculture. This includes developing heat-tolerant seed varieties, improving micro-irrigation, and providing better crop insurance networks to farmers.</p><p><strong>Focus Area:</strong> Connect this issue with the economic security of rural UP and potential migration patterns.</p>"
+  }
 ];
 
+let currentEdIndex = 0;
+
 // ==========================================
-// INITIALIZATION & UI LOGIC
+// UI & LOGIC FUNCTIONS
 // ==========================================
 window.onload = () => {
   setGreeting();
-  renderSyllabus();
-  updateProgress();
-  
-  // Set random topic of the day
-  const undone = masterSyllabus.filter(t => !t.done);
-  if(undone.length > 0) {
-    document.getElementById('todayTarget').innerText = undone[0].topic;
-  }
+  loadEditorial(0);
 };
 
 function showTab(id) {
@@ -271,86 +247,39 @@ function setGreeting() {
   document.getElementById('greetText').innerText = text;
 }
 
-// ==========================================
-// SYLLABUS & PROGRESS ENGINE
-// ==========================================
-function renderSyllabus() {
-  const container = document.getElementById('syllabusContainer');
-  container.innerHTML = '';
+// Editorial Logic
+function loadEditorial(index) {
+  const ed = editorials[index];
+  document.getElementById('edTitle').innerText = ed.title;
+  document.getElementById('edRel').innerText = ed.rel;
+  document.getElementById('edExcerpt').innerText = ed.excerpt;
   
-  masterSyllabus.forEach((item, index) => {
-    container.innerHTML += `
-      <label class="topic-item">
-        <input type="checkbox" class="custom-checkbox syl-checkbox" 
-               onchange="toggleTopic(${index})" ${item.done ? 'checked' : ''}>
-        <span class="topic-text">${item.topic}</span>
-      </label>
-    `;
-  });
+  document.getElementById('modalTitle').innerText = ed.title;
+  document.getElementById('modalRel').innerText = ed.rel;
+  document.getElementById('modalSource').innerText = "Source: " + ed.source;
+  document.getElementById('modalBody').innerHTML = ed.body;
 }
 
-function toggleTopic(index) {
-  masterSyllabus[index].done = !masterSyllabus[index].done;
-  updateProgress();
+function loadNextEditorial() {
+  currentEdIndex++;
+  if (currentEdIndex >= editorials.length) currentEdIndex = 0;
+  loadEditorial(currentEdIndex);
 }
 
-function updateProgress() {
-  const total = masterSyllabus.length;
-  const completed = masterSyllabus.filter(i => i.done).length;
-  const percentage = Math.round((completed / total) * 100);
-  
-  document.getElementById('progressText').innerText = percentage + "%";
-  document.getElementById('progressBar').style.width = percentage + "%";
+function openModal() {
+  document.getElementById('edModal').style.display = 'flex';
 }
 
-// ==========================================
-// POMODORO TIMER ENGINE
-// ==========================================
-let timerInterval;
-let timeLeft = 50 * 60; // 50 minutes
-let isRunning = false;
-
-function formatTime(seconds) {
-  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-  const s = (seconds % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
+function closeModal() {
+  document.getElementById('edModal').style.display = 'none';
 }
 
-function updateDisplay() {
-  document.getElementById('timer').innerText = formatTime(timeLeft);
-}
-
-function toggleTimer() {
-  const btn = document.getElementById('timerBtn');
-  if (isRunning) {
-    clearInterval(timerInterval);
-    btn.innerText = "Resume Work";
-    btn.style.background = "var(--primary)";
-  } else {
-    timerInterval = setInterval(() => {
-      if (timeLeft > 0) {
-        timeLeft--;
-        updateDisplay();
-      } else {
-        clearInterval(timerInterval);
-        alert("Session Complete! Take a 10-minute break.");
-        resetTimer();
-      }
-    }, 1000);
-    btn.innerText = "Pause Session";
-    btn.style.background = "var(--accent)";
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('edModal');
+  if (event.target == modal) {
+    modal.style.display = "none";
   }
-  isRunning = !isRunning;
-}
-
-function resetTimer() {
-  clearInterval(timerInterval);
-  isRunning = false;
-  timeLeft = 50 * 60;
-  updateDisplay();
-  const btn = document.getElementById('timerBtn');
-  btn.innerText = "Start Deep Work";
-  btn.style.background = "var(--primary)";
 }
 </script>
 </body>
