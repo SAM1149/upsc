@@ -3,214 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPPSC Executive Command Center 2026</title>
+    <title>UPPSC Executive Command Center | Mission 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1a237e; --primary-light: #3949ab; --primary-glow: rgba(26,35,126,0.1);
+            --primary: #1a237e; --primary-light: #3949ab; --primary-glow: rgba(26,35,126,0.08);
             --accent: #e65100; --success: #1b5e20; --error: #d32f2f;
-            --bg: #f0f2f8; --card: #ffffff; --text: #1a1a2e; --border: #dde1f0;
-            --shadow: 0 8px 30px rgba(0,0,0,0.05); --radius: 16px;
+            --bg: #f4f6fa; --card: #ffffff; --text: #1a1a2e; --border: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0,0,0,0.1); --radius: 16px;
         }
         [data-theme="dark"] {
-            --bg: #0a0c14; --card: #141828; --text: #e8eaf6; --border: #1e2340; --primary-glow: rgba(92,107,192,0.15);
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; --primary-glow: rgba(148,163,184,0.1);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; transition: background 0.3s, color 0.3s; }
         body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
         h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- LOGIN OVERLAY --- */
+        /* --- LOGIN SCREEN --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
         }
         .login-box {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
-            padding: 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            width: 90%; max-width: 400px; text-align: center; color: white;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px);
+            padding: 50px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
+            width: 90%; max-width: 420px; text-align: center; color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         }
         .login-box input {
-            width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px; border: none;
-            background: rgba(255,255,255,0.9); color: #000; font-weight: 800; text-align: center; font-size: 18px;
+            width: 100%; padding: 18px; margin: 25px 0; border-radius: 15px; border: none;
+            background: rgba(255,255,255,0.9); text-align: center; font-size: 20px; font-weight: 800; color: #1e293b;
         }
-        .login-box button {
-            width: 100%; padding: 15px; border-radius: 12px; border: none;
-            background: var(--accent); color: white; font-weight: 800; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(230, 81, 0, 0.3);
+        .login-btn {
+            width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--accent);
+            color: white; font-weight: 800; cursor: pointer; transform: scale(1); transition: 0.2s;
         }
+        .login-btn:active { transform: scale(0.98); }
 
         /* --- SIDEBAR --- */
-        .sidebar { width: 280px; background: var(--card); border-right: 1px solid var(--border); padding: 30px 20px; position: fixed; height: 100vh; z-index: 100; }
-        .sidebar h2 { color: var(--primary); margin-bottom: 5px; font-size: 26px; }
-        .sidebar span { color: var(--accent); font-weight: 800; font-size: 12px; display: block; margin-bottom: 40px; }
+        .sidebar { width: 280px; background: var(--card); border-right: 1px solid var(--border); padding: 35px 20px; position: fixed; height: 100vh; z-index: 100; }
+        .sidebar h2 { color: var(--primary); font-size: 28px; margin-bottom: 5px; }
+        .sidebar .rank { color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 40px; display: block; }
         .nav-btn {
-            width: 100%; padding: 16px; margin-bottom: 10px; border: none; background: transparent;
-            text-align: left; cursor: pointer; color: var(--text); font-weight: 700; border-radius: 12px;
+            width: 100%; padding: 16px; margin-bottom: 12px; border: none; background: transparent;
+            text-align: left; cursor: pointer; color: var(--text); font-weight: 700; border-radius: 14px;
             display: flex; align-items: center; gap: 15px; font-size: 15px;
         }
         .nav-btn:hover { background: var(--primary-glow); }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(26,35,126,0.3); }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 10px 20px -5px rgba(26,35,126,0.4); }
 
-        /* --- MAIN CONTENT --- */
-        .main { margin-left: 280px; padding: 40px; width: calc(100% - 280px); max-width: 1300px; }
-        .card { background: var(--card); border-radius: var(--radius); padding: 30px; border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 25px; }
+        /* --- MAIN AREA --- */
+        .main { margin-left: 280px; padding: 40px; width: calc(100% - 280px); max-width: 1400px; }
+        .card { background: var(--card); border-radius: var(--radius); padding: 30px; border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 30px; }
 
         /* --- SYLLABUS MATRIX --- */
-        .matrix-paper { margin-top: 20px; }
-        .paper-title { background: var(--primary-glow); color: var(--primary); padding: 15px; border-radius: 10px; font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; }
-        .subtopic-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; border-bottom: 1px solid var(--border); }
-        .subtopic-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--success); }
+        .paper-accordion { margin-bottom: 15px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+        .paper-trigger { 
+            background: var(--primary-glow); padding: 20px; cursor: pointer; font-weight: 800; 
+            color: var(--primary); display: flex; justify-content: space-between; align-items: center;
+        }
+        .subject-group { padding: 20px 30px; background: var(--card); border-bottom: 1px solid var(--border); }
+        .subject-title { font-size: 16px; font-weight: 800; color: var(--accent); margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 12px; }
+        .topic-item { display: flex; align-items: center; gap: 15px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .topic-item input { width: 20px; height: 20px; accent-color: var(--success); cursor: pointer; }
+        .topic-item label { font-size: 14px; font-weight: 600; cursor: pointer; flex: 1; }
+
+        /* --- PROGRESS BAR --- */
+        .prog-container { height: 14px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 20px 0; }
+        .prog-fill { height: 100%; background: linear-gradient(90deg, #10b981, #059669); width: 0%; transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* --- EDITORIAL READER --- */
-        #editorial-list-view, #editorial-full-view { display: none; }
-        .tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 10px; }
-        .tag-gs { background: var(--primary); color: white; }
-        .reader-title { font-size: 36px; margin: 15px 0; color: var(--primary); line-height: 1.2; }
-        .reader-meta { font-size: 14px; opacity: 0.6; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .reader-content { font-size: 18px; line-height: 1.8; margin-bottom: 40px; }
-        .qa-box { background: rgba(230, 81, 0, 0.05); border-left: 5px solid var(--accent); padding: 25px; border-radius: 8px; margin-top: 30px; }
-        .fact-box { background: var(--primary-glow); padding: 25px; border-radius: 8px; margin-top: 20px; }
+        .ed-tag { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase; background: var(--primary); color: white; margin-bottom: 15px; }
+        .reader-body { font-size: 18px; line-height: 1.8; margin: 25px 0; color: var(--text); }
+        .qa-section { background: rgba(230, 81, 0, 0.05); border-left: 6px solid var(--accent); padding: 25px; border-radius: 12px; margin-top: 30px; }
+        .facts-section { background: var(--primary-glow); padding: 25px; border-radius: 12px; margin-top: 25px; }
 
-        /* --- PROGRESS --- */
-        .p-container { height: 12px; background: #e0e0e0; border-radius: 10px; overflow: hidden; margin: 15px 0; }
-        .p-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #1b5e20); width: 0%; transition: 1s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
-
-        .btn-action { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 700; margin-top: 15px; }
-        .btn-secondary { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-action { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-box">
-            <h1 style="font-size: 30px; margin-bottom: 10px;">Executive Access</h1>
-            <p style="opacity: 0.7;">Enter Passkey for Mission 2026</p>
-            <input type="password" id="passkey" placeholder="••••">
-            <button onclick="authenticate()">LOG IN</button>
-            <p id="login-err" style="color: #ff5252; margin-top: 15px; font-size: 12px; display: none;">ACCESS DENIED: WRONG PIN</p>
+            <h1 style="font-size: 32px; margin-bottom: 5px;">Officer Login</h1>
+            <p style="opacity: 0.6; font-size: 14px;">Restricted Access: UPPSC Executive 2026</p>
+            <input type="password" id="passkey" placeholder="Enter Access Pin">
+            <button class="login-btn" onclick="authenticate()">INITIALIZE DASHBOARD</button>
+            <p id="err" style="color: #ff8a8a; margin-top: 15px; font-weight: 700; font-size: 12px; display: none;">ACCESS DENIED: INCORRECT PIN</p>
         </div>
     </div>
 
     <aside class="sidebar">
         <h2>UPPSC PRO</h2>
-        <span>Sub-Divisional Magistrate (Adam)</span>
+        <span class="rank">SDM (ADAM BRANCH) 2026</span>
         <nav>
-            <button class="nav-btn active" onclick="nav('dash')">📊 Command Center</button>
+            <button class="nav-btn active" onclick="nav('dash')">📊 Dashboard</button>
             <button class="nav-btn" onclick="nav('matrix')">📚 Syllabus Matrix</button>
-            <button class="nav-btn" onclick="nav('ed')">📰 Live Editorials</button>
-            <button class="nav-btn" onclick="toggleTheme()" style="margin-top: 30px; opacity: 0.7;">🌓 Dark Mode</button>
-            <button class="nav-btn" onclick="logout()" style="color: var(--error);">🔒 Terminate Session</button>
+            <button class="nav-btn" onclick="nav('ed')">📰 Editorial Analysis</button>
+            <button class="nav-btn" onclick="toggleTheme()" style="margin-top: 40px; opacity: 0.7;">🌓 Dark Mode</button>
+            <button class="nav-btn" onclick="location.reload()" style="color: var(--error);">🔒 Terminate Session</button>
         </nav>
     </aside>
 
     <main class="main">
         <section id="dash" class="content-sec">
             <div class="card">
-                <h3>Overall Mastery Record</h3>
-                <h1 id="total-perc" style="font-size: 50px; color: var(--success);">0%</h1>
-                <div class="p-container"><div id="total-bar" class="p-fill"></div></div>
-                <p id="total-stats" style="font-weight: 700; opacity: 0.6;">0 of 0 topics archived.</p>
+                <h3>Overall Mastery Level</h3>
+                <h1 id="total-perc" style="font-size: 70px; color: var(--success); margin: 10px 0;">0%</h1>
+                <div class="prog-container"><div id="total-bar" class="prog-fill"></div></div>
+                <p id="total-stats" style="font-weight: 700; opacity: 0.7;">0 of 0 topics archived in database.</p>
             </div>
             <div class="card">
-                <h3>Daily 3-Hour Directive</h3>
-                <p style="margin-top: 10px;">Current Priority: <strong id="next-task" style="color: var(--accent);">Initialize Syllabus...</strong></p>
+                <h3>Current High-Priority Objective</h3>
+                <div style="display: flex; align-items: center; gap: 20px; margin-top: 15px;">
+                    <div style="background: var(--accent); color: white; padding: 15px; border-radius: 12px; font-weight: 800; font-size: 24px;">🎯</div>
+                    <div>
+                        <p style="font-size: 13px; font-weight: 800; color: var(--accent);">NEXT UP:</p>
+                        <h2 id="next-task" style="font-size: 22px;">Loading Syllabus...</h2>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section id="matrix" class="content-sec" style="display: none;">
             <div class="card">
-                <h2>Comprehensive Syllabus Matrix</h2>
-                <p style="font-size: 13px; opacity: 0.6; margin-bottom: 20px;">Data auto-syncs with browser local-db.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2>UPPSC Micro-Topic Syllabus (GS 1-6)</h2>
+                    <span id="matrix-stats" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 800;">0% DONE</span>
+                </div>
                 <div id="matrix-render"></div>
             </div>
         </section>
 
         <section id="ed" class="content-sec" style="display: none;">
-            <div id="ed-list-view" style="display: block;">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3>High-Yield Analysis</h3>
-                        <button class="btn-action" onclick="rotateEditorial()">🔄 Refresh / Next</button>
-                    </div>
-                    <div style="background: var(--bg); padding: 25px; border-radius: 12px;">
-                        <span class="tag tag-gs" id="prev-gs">GS Paper 2</span>
-                        <h2 id="prev-title" style="margin-bottom: 15px;">Loading Editorial...</h2>
-                        <p id="prev-excerpt" style="margin-bottom: 25px; opacity: 0.8;"></p>
-                        <button class="btn-action" onclick="showFullEd()">📖 Open Full Page</button>
-                    </div>
+            <div id="ed-list" class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3>Daily Executive Analysis</h3>
+                    <button class="btn-action" style="background: var(--accent);" onclick="rotateEditorial()">🔄 Next Article</button>
+                </div>
+                <div style="background: var(--primary-glow); padding: 30px; border-radius: 15px; border: 1px solid var(--border);">
+                    <span class="ed-tag" id="prev-gs">GS PAPER 2</span>
+                    <h2 id="prev-title" style="margin: 15px 0; font-size: 28px;">Loading...</h2>
+                    <p id="prev-excerpt" style="font-size: 16px; opacity: 0.8; margin-bottom: 25px; line-height: 1.6;"></p>
+                    <button class="btn-action" onclick="showReader()">📖 READ FULL ANALYSIS</button>
                 </div>
             </div>
 
-            <div id="ed-full-view" class="card" style="display: none;">
-                <button class="btn-action btn-secondary" onclick="closeFullEd()">⬅ Back to Dashboard</button>
-                <div class="reader-header">
-                    <span class="tag tag-gs" id="full-gs">GS PAPER 2</span>
-                    <h1 class="reader-title" id="full-title">Editorial Title</h1>
-                    <div class="reader-meta" id="full-meta">Source: The Hindu | Focus: Governance</div>
-                </div>
-                <div class="reader-content" id="full-body"></div>
+            <div id="ed-reader" class="card" style="display: none;">
+                <button class="btn-action" style="background: var(--border); color: var(--text); margin-bottom: 30px;" onclick="closeReader()">⬅ BACK TO LIST</button>
+                <span class="ed-tag" id="full-gs">GS PAPER 2</span>
+                <h1 id="full-title" style="font-size: 40px; margin-bottom: 10px;">Title</h1>
+                <p id="full-meta" style="opacity: 0.6; font-size: 14px; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">Source</p>
                 
-                <div class="qa-box">
-                    <h4>🎯 Probable Mains Question</h4>
-                    <p id="full-ques" style="font-weight: 700; margin-top: 10px;"></p>
+                <div class="reader-body" id="full-body"></div>
+
+                <div class="qa-section">
+                    <h4 style="color: var(--accent); margin-bottom: 10px;">🎯 Probable Mains Question</h4>
+                    <p id="full-ques" style="font-weight: 800; font-size: 17px; line-height: 1.5;"></p>
                 </div>
-                
-                <div class="fact-box">
-                    <h4>💡 Ye Bhi Jane (Deep Dive)</h4>
-                    <ul id="full-facts" style="margin-top:15px; padding-left: 20px; line-height: 2;"></ul>
+
+                <div class="facts-section">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">💡 Ye Bhi Jane (Key Facts)</h4>
+                    <ul id="full-facts" style="padding-left: 20px; line-height: 2; font-weight: 600;"></ul>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // --- DATABASE: SYLLABUS ---
+        // --- MASTER SYLLABUS DATABASE ---
         const syllabusData = [
-            { paper: "GS 1: History & Geography", topics: ["Indus Valley Art", "Temple Architecture", "Bhakti Movement", "Plate Tectonics", "UP River Systems", "Monsoon Mechanism"] },
-            { paper: "GS 2: Polity & Governance", topics: ["Preamble & Features", "President vs Governor", "SaaS in Administration", "Transparency in Tenders", "E-Governance Initiatives", "Adam Branch Functions"] },
-            { paper: "GS 3: Economy & Environment", topics: ["UP Budget Analysis", "MSME Supply Chain", "Climate Change in UP", "Cyber Security", "Infrastructure Projects"] }
-        ];
-
-        // --- DATABASE: EDITORIALS ---
-        const editorials = [
             {
-                title: "Digitizing the Tender Process: A Leap for UP",
-                gs: "GS Paper 2: Governance",
-                meta: "The Hindu Editorial | April 2026",
-                excerpt: "Automation of government procurement through SaaS platforms is ending the era of bureaucratic gatekeeping...",
-                body: "<p>The shift towards digital tendering in Uttar Pradesh is not just a technological upgrade but a socio-economic reform. By using automated queue management, the state ensures that every contractor, regardless of their size, gets a fair chance.</p><p>This system eliminates physical intervention, reducing the risk of corruption and ensuring that the public exchequer gets the best value for money. For an aspirant targeting the administrative branch, understanding the mechanics of these SaaS tools is vital.</p>",
-                ques: "Critically evaluate how E-Governance tools can improve 'Probity in Governance'. Discuss with special reference to the procurement reforms in Uttar Pradesh. (15 Marks)",
-                facts: ["Article 14 - Right to Equality in public contracts.", "GeM portal has saved India over ₹40,000 Cr.", "UP is the first state to mandate e-tendering for projects above ₹1 Lakh."]
+                paper: "GS 1: Indian Heritage, History & Geography",
+                subjects: [
+                    { name: "Ancient & Medieval India", topics: ["Art Forms & Literature", "Architecture (Indus to Mughal)", "Bhakti & Sufi Movement"] },
+                    { name: "Modern History", topics: ["1857 Revolt & UP Role", "Freedom Struggle Personalities", "Post-Independence Consolidation"] },
+                    { name: "Geography", topics: ["Physical Geography of World", "Indian Drainage Systems", "Monsoon & Climate Patterns", "Natural Resources & Energy"] },
+                    { name: "Social Issues", topics: ["Role of Women", "Globalization Impact", "Poverty & Urbanization", "Communalism & Secularism"] }
+                ]
             },
             {
-                title: "The 16th Finance Commission & State Autonomy",
-                gs: "GS Paper 2: Polity",
-                meta: "Indian Express | Analysis",
-                excerpt: "Exploring the fiscal relationship between the Centre and heavily populated states like Uttar Pradesh...",
-                body: "<p>As the 16th Finance Commission begins its deliberations, the focus returns to horizontal devolution. States like UP, with massive developmental needs, are advocating for a higher weightage to population and forest cover.</p><p>Fiscal federalism in India is at a crossroads where the 'Performance' vs 'Need' debate is intensifying. Aspirants must understand the role of Article 280 in balancing these competing interests.</p>",
-                ques: "Explain the Constitutional role of the Finance Commission. How does it balance the fiscal needs of developing states with the performance of efficient states? (10 Marks)",
-                facts: ["Article 280: Finance Commission formation.", "15th FC used 2011 Census data.", "Vertical devolution currently stands at 41%."]
+                paper: "GS 2: Governance, Constitution & Polity",
+                subjects: [
+                    { name: "Indian Constitution", topics: ["Fundamental Rights & DPSP", "Basic Structure Doctrine", "Union & State Executives", "Judiciary & Judicial Review"] },
+                    { name: "Governance & Administration", topics: ["Adam Branch: Administration & Roles", "SaaS in E-Governance", "Transparency in Tenders", "RTI & Citizen Charters", "Role of Civil Services"] },
+                    { name: "Social Justice", topics: ["Welfare Schemes for Vulnerable", "Healthcare & Education", "Human Resources Development"] },
+                    { name: "International Relations", topics: ["India's Neighborhood Relations", "Bilateral & Global Groups", "Indian Diaspora"] }
+                ]
+            },
+            {
+                paper: "GS 3: Technology, Economy & Environment",
+                subjects: [
+                    { name: "Indian Economy", topics: ["Indian Planning & Budgeting", "MSME & Industrial Policy", "GST & Infrastructure", "SaaS & Digital Economy"] },
+                    { name: "Science & Tech", topics: ["AI & Disruptive Tech", "Space & Biotech", "Cyber Security & Money Laundering"] },
+                    { name: "Environment", topics: ["Climate Change Mitigation", "Pollution Control", "Environmental Impact Assessment (EIA)"] },
+                    { name: "Internal Security", topics: ["Border Management", "Extremism Linkages", "Organized Crime"] }
+                ]
+            },
+            {
+                paper: "GS 4: Ethics, Integrity & Aptitude",
+                subjects: [
+                    { name: "Core Ethics", topics: ["Ethics in Human Actions", "Emotional Intelligence", "Moral Thinkers & Philosophers"] },
+                    { name: "Administrative Ethics", topics: ["Probity in Governance", "Codes of Conduct", "Ethical Dilemmas Case Studies"] }
+                ]
+            },
+            {
+                paper: "GS 5 & 6: Uttar Pradesh Special",
+                subjects: [
+                    { name: "UP History & Culture", topics: ["Ancient to Modern UP History", "UP Folk Arts & Festivals", "UP Tribal Heritage"] },
+                    { name: "UP Economy & Geo", topics: ["UP Agriculture & Irrigation", "ODOP (One District One Product)", "UP Mineral Resources", "UP Land Reforms"] },
+                    { name: "UP Administration", topics: ["UP Law & Order System", "State Planning Commission", "UP Welfare Schemes"] }
+                ]
             }
         ];
 
-        let currentEdIdx = 0;
+        // --- EDITORIAL DATABASE ---
+        const editorialDB = [
+            {
+                title: "Transparency in Tenders: The SaaS Revolution in UP",
+                gs: "GS Paper 2 & 3",
+                source: "Economic Times Analysis | April 2026",
+                excerpt: "Exploring how automated queue management and digital tendering are dismantling bureaucratic red tape in Uttar Pradesh...",
+                body: `<p>The shift towards Software-as-a-Service (SaaS) in government procurement marks a watershed moment for Uttar Pradesh's administration. Traditionally, tender allocation was a process shrouded in opacity, often leading to delays and favoritism.</p>
+                       <p>By integrating automated GST invoice verification and digital queue management, the state has ensured that 'Adam Branch' officers can oversee procurement without the risk of manual interference. This system not only speeds up infrastructure projects but also builds trust among small-scale contractors.</p>`,
+                ques: "Critically analyze the role of modern IT tools in enhancing 'Probity in Governance'. How can SaaS models reduce rent-seeking behavior in government procurement? (15 Marks, 250 Words)",
+                facts: ["UP is the first state to implement end-to-end SaaS for local tenders.", "Article 299: Deals with Government Contracts.", "E-Governance has improved UP's 'Ease of Doing Business' ranking."]
+            },
+            {
+                title: "The 16th Finance Commission: Balancing the North-South Divide",
+                gs: "GS Paper 2: Polity",
+                source: "The Hindu Editorial",
+                excerpt: "A deep dive into fiscal federalism and the challenges of resource allocation for states like Uttar Pradesh...",
+                body: `<p>As the 16th Finance Commission begins its work, the debate over vertical and horizontal devolution has reignited. Heavily populated states like UP require massive capital for infrastructure, while southern states argue for rewards based on demographic management.</p>
+                       <p>Aspirants must understand the constitutional mandate of Article 280 and how it acts as the balancing wheel of Indian fiscal federalism.</p>`,
+                ques: "Discuss the challenges faced by the Finance Commission in ensuring equitable distribution of tax proceeds among states with varying demographic profiles. (10 Marks, 150 Words)",
+                facts: ["Article 280 mandates FC every 5 years.", "15th FC recommended 41% vertical devolution.", "UP has the highest weightage in population-based devolution."]
+            }
+        ];
 
-        // --- AUTHENTICATION ---
+        let edIdx = 0;
+
+        // --- AUTH & NAV ---
         function authenticate() {
             if(document.getElementById('passkey').value === '1234') {
                 document.getElementById('login-screen').style.display = 'none';
                 init();
-            } else {
-                document.getElementById('login-err').style.display = 'block';
-            }
+            } else { document.getElementById('err').style.display = 'block'; }
         }
 
-        function logout() { location.reload(); }
-
-        // --- NAVIGATION ---
         function nav(id) {
             document.querySelectorAll('.content-sec').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -218,7 +259,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- CORE LOGIC ---
+        // --- CORE FUNCTIONS ---
         function init() {
             renderMatrix();
             loadProgress();
@@ -228,33 +269,43 @@
         function renderMatrix() {
             const container = document.getElementById('matrix-render');
             let html = '';
-            syllabusData.forEach((p, pIdx) => {
-                html += `<div class="matrix-paper">
-                    <div class="paper-title">${p.paper} <span>+</span></div>
-                    <div class="topics-list">`;
-                p.topics.forEach((t, tIdx) => {
-                    const id = `check-${pIdx}-${tIdx}`;
-                    html += `
-                        <div class="subtopic-item">
-                            <input type="checkbox" id="${id}" onchange="saveProgress()">
-                            <label for="${id}">${t}</label>
+            let idCount = 0;
+
+            syllabusData.forEach(p => {
+                html += `<div class="paper-accordion">
+                    <div class="paper-trigger" onclick="toggleAcc(this)">${p.paper} <span>▼</span></div>
+                    <div class="paper-body" style="display:none;">`;
+                p.subjects.forEach(s => {
+                    html += `<div class="subject-group">
+                        <div class="subject-title">${s.name}</div>`;
+                    s.topics.forEach(t => {
+                        const tid = `t-${idCount++}`;
+                        html += `<div class="topic-item">
+                            <input type="checkbox" id="${tid}" onchange="saveProgress()">
+                            <label for="${tid}">${t}</label>
                         </div>`;
+                    });
+                    html += `</div>`;
                 });
                 html += `</div></div>`;
             });
             container.innerHTML = html;
         }
 
+        function toggleAcc(el) {
+            const body = el.nextElementSibling;
+            body.style.display = body.style.display === 'none' ? 'block' : 'none';
+        }
+
         function saveProgress() {
-            const checks = document.querySelectorAll('input[type="checkbox"]');
             const data = {};
-            checks.forEach(c => data[c.id] = c.checked);
-            localStorage.setItem('uppsc_2026_progress', JSON.stringify(data));
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => data[c.id] = c.checked);
+            localStorage.setItem('uppsc_2026_db', JSON.stringify(data));
             updateStats();
         }
 
         function loadProgress() {
-            const saved = JSON.parse(localStorage.getItem('uppsc_2026_progress') || '{}');
+            const saved = JSON.parse(localStorage.getItem('uppsc_2026_db') || '{}');
             Object.keys(saved).forEach(id => {
                 if(document.getElementById(id)) document.getElementById(id).checked = saved[id];
             });
@@ -262,47 +313,45 @@
         }
 
         function updateStats() {
-            const total = document.querySelectorAll('input[type="checkbox"]');
-            const done = Array.from(total).filter(c => c.checked).length;
-            const perc = total.length > 0 ? Math.round((done / total.length) * 100) : 0;
-            
+            const all = document.querySelectorAll('input[type="checkbox"]');
+            const done = Array.from(all).filter(c => c.checked).length;
+            const perc = all.length > 0 ? Math.round((done / all.length) * 100) : 0;
+
             document.getElementById('total-perc').innerText = perc + "%";
             document.getElementById('total-bar').style.width = perc + "%";
-            document.getElementById('total-stats').innerText = `${done} of ${total.length} topics archived.`;
-            
-            const next = Array.from(total).find(c => !c.checked);
-            document.getElementById('next-task').innerText = next ? next.nextElementSibling.innerText : "All Clear! Focus on Revision.";
+            document.getElementById('total-stats').innerText = `${done} of ${all.length} micro-topics mastered.`;
+            document.getElementById('matrix-stats').innerText = perc + "% DONE";
+
+            const next = Array.from(all).find(c => !c.checked);
+            document.getElementById('next-task').innerText = next ? next.nextElementSibling.innerText : "Revision & Mock Tests";
         }
 
         // --- EDITORIAL LOGIC ---
         function rotateEditorial() {
-            const ed = editorials[currentEdIdx];
+            const ed = editorialDB[edIdx];
             document.getElementById('prev-title').innerText = ed.title;
             document.getElementById('prev-gs').innerText = ed.gs;
             document.getElementById('prev-excerpt').innerText = ed.excerpt;
             
-            // Prepare Full View
             document.getElementById('full-title').innerText = ed.title;
             document.getElementById('full-gs').innerText = ed.gs;
-            document.getElementById('full-meta').innerText = ed.meta;
+            document.getElementById('full-meta').innerText = ed.source;
             document.getElementById('full-body').innerHTML = ed.body;
             document.getElementById('full-ques').innerText = ed.ques;
-            
-            const factList = document.getElementById('full-facts');
-            factList.innerHTML = ed.facts.map(f => `<li>${f}</li>`).join('');
+            document.getElementById('full-facts').innerHTML = ed.facts.map(f => `<li>${f}</li>`).join('');
 
-            currentEdIdx = (currentEdIdx + 1) % editorials.length;
+            edIdx = (edIdx + 1) % editorialDB.length;
         }
 
-        function showFullEd() {
-            document.getElementById('ed-list-view').style.display = 'none';
-            document.getElementById('ed-full-view').style.display = 'block';
-            window.scrollTo(0,0);
+        function showReader() {
+            document.getElementById('ed-list').style.display = 'none';
+            document.getElementById('ed-reader').style.display = 'block';
+            window.scrollTo(0, 0);
         }
 
-        function closeFullEd() {
-            document.getElementById('ed-full-view').style.display = 'none';
-            document.getElementById('ed-list-view').style.display = 'block';
+        function closeReader() {
+            document.getElementById('ed-reader').style.display = 'none';
+            document.getElementById('ed-list').style.display = 'block';
         }
 
         function toggleTheme() {
