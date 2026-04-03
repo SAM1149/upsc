@@ -1,1219 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPSC Intelligent Dashboard - Premium v2.2</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="upsc_data_v3.js"
-        onerror="alert('CRITICAL: upsc_data_v3.js NOT FOUND!\n\nYou must upload both files to GitHub for the dashboard to work. Make sure upsc_data_v3.js is in the same folder.')"></script>
+    <title>UPPSC Aspirant Pro | Ultimate Dashboard</title>
     <style>
         :root {
-            --bg-primary: #f4f4f5;
-            --bg-secondary: #fafaf9;
-            --text-primary: #18181b;
-            --text-secondary: #64748b;
-            --accent-primary: #2563eb;
-            --accent-hover: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --border-color: #e2e8f0;
-            --chart-bg: #e0f2fe;
-            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --sidebar-width: 280px;
-
-            --banner-bg: linear-gradient(135deg, #fffbeb, #f0f9ff);
-            --banner-header: #c2410c;
-            --banner-title: #1e3a8a;
-            --banner-desc: #334155;
-            --banner-label-bg: #0369a1;
-            --banner-accent: #b45309;
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --accent: #f59e0b;
+            --sidebar-width: 260px;
+            --transition: all 0.3s ease;
         }
 
         [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --accent-primary: #3b82f6;
-            --accent-hover: #60a5fa;
-            --success: #34d399;
-            --warning: #fbbf24;
-            --danger: #f87171;
-            --border-color: #334155;
-            --chart-bg: #1e3a8a;
-            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
-
-            --banner-bg: linear-gradient(135deg, #1e293b, #0f172a);
-            --banner-header: #fbbf24;
-            --banner-title: #f8fafc;
-            --banner-desc: #cbd5e1;
-            --banner-label-bg: #38bdf8;
-            --banner-accent: #fbbf24;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body { background: var(--bg); color: var(--text-main); transition: var(--transition); line-height: 1.6; }
+
+        /* --- AUTH SYSTEM --- */
+        #auth-overlay {
+            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
         }
 
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+        .auth-card {
+            background: var(--card-bg); padding: 2rem; border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .flex-col {
-            flex-direction: column;
-        }
-
-        .items-center {
-            align-items: center;
-        }
-
-        .justify-between {
-            justify-content: space-between;
-        }
-
-        .gap-4 {
-            gap: 1rem;
-        }
-
-        .p-4 {
-            padding: 1rem;
-        }
-
-        .p-6 {
-            padding: 1.5rem;
-        }
-
-        .rounded {
-            border-radius: 0.5rem;
-        }
-
-        .font-bold {
-            font-weight: 700;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-        }
-
-        .text-xl {
-            font-size: 1.25rem;
-        }
-
-        .text-accent {
-            color: var(--accent-primary);
-        }
-
-        .w-full {
-            width: 100%;
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        input, select {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border);
+            border-radius: 0.5rem; background: var(--bg); color: var(--text-main);
         }
 
         .btn {
-            padding: 0.5rem 1.25rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            outline: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        #sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
-            height: 100%;
-            z-index: 50;
-        }
-
-        .logo-area {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 2.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.8rem 1rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 0.75rem;
-            margin-bottom: 0.25rem;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background-color: var(--bg-primary);
-            color: var(--accent-primary);
-            font-weight: 700;
-        }
-
-        #main-content {
-            flex: 1;
-            padding: 2.5rem;
-            overflow-y: auto;
-        }
-
-        .card {
-            background-color: var(--bg-secondary);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
-        }
-
-        .motivational-quote {
-            background: var(--banner-bg);
-            padding: 1.5rem;
-            border-radius: 1.25rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quote-text {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--banner-title);
-        }
-
-        .category-badge {
-            background: var(--banner-label-bg);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .type-label {
-            background: var(--banner-accent);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .accordion-item {
-            border: 1px solid var(--border-color);
-            background: var(--bg-secondary);
-            border-radius: 0.75rem;
-            margin-bottom: 0.75rem;
-            overflow: hidden;
-        }
-
-        .accordion-header {
-            padding: 1.25rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            background: var(--bg-primary);
-        }
-
-        .accordion-content {
-            padding: 0 1.25rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: 0.4s ease-out;
-        }
-
-        .accordion-item.open .accordion-content {
-            max-height: 1500px;
-            padding: 1.25rem;
-        }
-
-        .weight-badge {
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 5px;
-            text-transform: uppercase;
-        }
-
-        .weight-high {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .weight-medium {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        #setup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--bg-primary);
-            z-index: 200;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        .setup-container {
-            background: var(--bg-secondary);
+            background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: var(--transition);
             width: 100%;
-            max-width: 600px;
-            border-radius: 1.5rem;
-            padding: 3rem;
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-color);
+        }
+        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* --- LAYOUT --- */
+        #app { display: none; }
+        
+        .sidebar {
+            position: fixed; width: var(--sidebar-width); height: 100vh;
+            background: var(--card-bg); border-right: 1px solid var(--border);
+            padding: 2rem 1rem; overflow-y: auto;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .main-content { margin-left: var(--sidebar-width); padding: 2rem; min-height: 100vh; }
+
+        nav ul { list-style: none; }
+        nav li {
+            padding: 0.8rem 1rem; margin-bottom: 0.5rem; border-radius: 0.5rem;
+            cursor: pointer; color: var(--text-muted); font-weight: 500; transition: var(--transition);
+        }
+        nav li:hover, nav li.active { background: var(--primary); color: white; }
+
+        .top-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; sticky: top; background: var(--bg); padding: 10px 0; z-index: 100;
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
+        /* --- DASHBOARD ELEMENTS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--card-bg); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border); }
+        .progress-circle { width: 80px; height: 80px; border-radius: 50%; border: 8px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; }
+        
+        .task-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .task-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 0.85rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            outline: none;
-            font-size: 1rem;
-        }
+        /* --- SYLLABUS --- */
+        .syllabus-item { margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 0.5rem; }
+        .syllabus-header { padding: 1rem; background: var(--bg); cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; }
+        .syllabus-content { padding: 1rem; display: none; }
+        .chapter { margin: 5px 0; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
 
-        #mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            z-index: 100;
-            justify-content: space-around;
-            padding: 0.5rem 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
-        }
+        /* --- QUESTIONS --- */
+        #quiz-container { margin-top: 1rem; }
+        .question-card { background: var(--bg); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border-left: 4px solid var(--primary); }
+        .answer-explanation { display: none; margin-top: 10px; padding: 10px; background: #dcfce7; color: #166534; border-radius: 4px; }
 
-        #mobile-nav .nav-link {
-            flex-direction: column;
-            gap: 4px;
-            font-size: 10px;
-            padding: 8px 4px;
-            margin: 0;
-            border-radius: 0;
-            text-align: center;
-            min-width: 60px;
-        }
-
-        #mobile-nav .nav-link span {
-            font-size: 18px;
-        }
-
+        /* --- MOBILE RESPONSIVE --- */
         @media (max-width: 768px) {
-            #sidebar {
-                display: none !important;
-            }
-
-            #mobile-nav {
-                display: flex;
-            }
-
-            #main-content {
-                padding: 1rem !important;
-                margin-bottom: 75px !important;
-            }
-
-            .grid-3 {
-                grid-template-columns: 1fr !important;
-            }
-
-            .motivational-quote {
-                padding: 1rem;
-            }
-
-            .quote-text {
-                font-size: 0.95rem;
-            }
-
-            .setup-container {
-                padding: 1.5rem;
-                margin: 10px;
-            }
-
-            header h1 {
-                font-size: 1.25rem;
-            }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 1rem; }
+            .top-nav { flex-direction: column; gap: 1rem; text-align: center; }
         }
+
+        .dark-mode-toggle { cursor: pointer; background: var(--border); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; }
+        .search-box { padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border); min-width: 250px; }
     </style>
 </head>
-
 <body>
-    <nav id="sidebar">
-        <div class="logo-area">🎓 <span style="color:var(--accent-primary)">UPSC</span>Mentor</div>
-        <div id="nav-items"></div>
-        <div style="margin-top: auto;">
-            <button class="btn btn-outline w-full" onclick="Actions.toggleTheme()">🌓 Toggle Theme</button>
+
+    <div id="auth-overlay">
+        <div class="auth-card">
+            <h2 style="margin-bottom: 1.5rem; text-align: center;">UPPSC Aspirant Login</h2>
+            <div class="input-group">
+                <label>Name</label>
+                <input type="text" id="user-name" placeholder="Enter your name">
+            </div>
+            <div class="input-group">
+                <label>Target Exam Year</label>
+                <select id="exam-year">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Preparation Start Date</label>
+                <input type="date" id="start-date">
+            </div>
+            <button class="btn" onclick="app.register()">Start Preparation</button>
         </div>
-    </nav>
+    </div>
 
-    <main id="main-content"></main>
-    <nav id="mobile-nav"></nav>
+    <div id="app">
+        <div class="sidebar">
+            <h2 style="color: var(--primary); margin-bottom: 2rem;">UPPSC Prep Tool</h2>
+            <nav>
+                <ul id="menu">
+                    <li class="active" onclick="app.navigate('dashboard')">Dashboard</li>
+                    <li onclick="app.navigate('syllabus')">Full Syllabus</li>
+                    <li onclick="app.navigate('timetable')">1 Year Plan</li>
+                    <li onclick="app.navigate('questions')">Question Bank</li>
+                    <li onclick="app.navigate('editorial')">Editorials</li>
+                    <li onclick="app.navigate('profile')">My Profile</li>
+                </ul>
+            </nav>
+        </div>
 
-    <div id="setup-overlay" class="hidden">
-        <div class="setup-container">
-            <h2 class="text-xl font-bold mb-6 text-accent" id="setup-title">Initialize Your Mentorship</h2>
-
-            <!-- Auth Selection -->
-            <div id="auth-selector" class="flex gap-4 mb-8">
-                <button class="btn btn-primary flex-1" id="btn-signup-view" onclick="UI.toggleAuth(false)">New
-                    Aspirant</button>
-                <button class="btn btn-outline flex-1" id="btn-login-view" onclick="UI.toggleAuth(true)">Existing
-                    User</button>
-            </div>
-
-            <!-- Login Flow -->
-            <div id="login-flow" class="hidden">
-                <div class="form-group"><label class="form-label">Email Address</label><input type="email"
-                        id="login-email" class="form-input" placeholder="you@example.com"></div>
-                <div class="form-group"><label class="form-label">Password</label><input type="password"
-                        id="login-password" class="form-input" placeholder="••••••••"></div>
-                <button class="btn btn-primary w-full" onclick="Auth.loginProc()">Log Into Cloud</button>
-            </div>
-
-            <!-- Signup/Setup Flow -->
-            <form id="setup-form">
-                <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="setup-name"
-                        class="form-input" required placeholder="Enter your name"></div>
-                <div class="flex gap-4">
-                    <div class="form-group w-full"><label class="form-label">Target Year</label><select id="setup-year"
-                            class="form-select">
-                            <option>2026</option>
-                            <option>2027</option>
-                            <option>2028</option>
-                            <option>2029</option>
-                            <option>2030</option>
-                        </select></div>
-                    <div class="form-group w-full"><label class="form-label">Daily Study Goal (Hours)</label><input
-                            type="number" id="setup-hours" class="form-input" value="8" min="4" max="16"></div>
+        <div class="main-content">
+            <div class="top-nav">
+                <div class="search-container">
+                    <input type="text" placeholder="Search syllabus/questions..." class="search-box" onkeyup="app.search(this.value)">
                 </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span id="welcome-text"></span>
+                    <div class="dark-mode-toggle" onclick="app.toggleDarkMode()">🌓 Toggle Theme</div>
+                </div>
+            </div>
 
-                <div
-                    style="padding:1.5rem; background:rgba(0,0,0,0.02); border-radius:12px; border:1px dashed var(--border-color); margin-bottom:1.5rem;">
-                    <div id="cloud-fields">
-                        <p class="text-[10px] text-secondary mb-2 uppercase font-bold text-center">Secure Your Data
-                            (Optional)</p>
-                        <input type="email" id="setup-email" class="form-input mb-3"
-                            placeholder="Email (Leave blank for local-only)">
-                        <input type="password" id="setup-password" class="form-input"
-                            placeholder="Password (Leave blank for local-only)">
+            <div id="tab-dashboard" class="tab-content">
+                <h1 style="margin-bottom: 1.5rem;">Aspirant Dashboard</h1>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Daily Target</h3>
+                        <p style="font-size: 2rem; font-weight: bold; color: var(--primary);">3 Hours</p>
+                        <p>Status: <span id="daily-status">Pending</span></p>
+                    </div>
+                    <div class="card">
+                        <h3>Overall Completion</h3>
+                        <div style="display:flex; align-items: center; gap: 20px;">
+                            <div class="progress-circle"><span id="overall-pct">0%</span></div>
+                            <p>Syllabus coverage based on tracked tasks.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Today's Focus</h3>
+                        <div id="today-tasks-list">
+                            </div>
                     </div>
                 </div>
+                <div class="card" style="margin-top: 1.5rem; background: linear-gradient(to right, #4f46e5, #818cf8); color: white;">
+                    <p id="quote-text">"Success is the sum of small efforts, repeated day in and day out."</p>
+                </div>
+            </div>
 
-                <button type="submit" class="btn btn-primary w-full">Start Personalized Prep</button>
-            </form>
+            <div id="tab-syllabus" class="tab-content" style="display:none">
+                <h2>UPPSC Structured Syllabus</h2>
+                <div id="syllabus-container" style="margin-top: 1.5rem;">
+                    </div>
+            </div>
+
+            <div id="tab-timetable" class="tab-content" style="display:none">
+                <h2>365-Day Smart Plan</h2>
+                <div class="card" style="margin: 1.5rem 0;">
+                    <h4>Phase 1: Foundation (Months 1-4)</h4>
+                    <p>Focus: NCERTs + Basic GS (History, Polity)</p>
+                </div>
+                <div id="calendar-view" class="grid">
+                    </div>
+            </div>
+
+            <div id="tab-questions" class="tab-content" style="display:none">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Question Bank</h2>
+                    <button class="btn" style="width: auto;" onclick="app.loadRandomQuiz()">Shuffle Quiz</button>
+                </div>
+                <div id="quiz-container">
+                    </div>
+            </div>
+
+            <div id="tab-editorial" class="tab-content" style="display:none">
+                <h2>Daily Editorials (Mock Data)</h2>
+                <div id="editorial-list">
+                    </div>
+                <button class="btn" style="width: auto; margin-top: 1rem;" onclick="app.loadMoreEditorials()">Load New Editorial</button>
+            </div>
+
+            <div id="tab-profile" class="tab-content" style="display:none">
+                <h2>User Profile</h2>
+                <div class="card" id="profile-details"></div>
+                <button class="btn" style="background: #ef4444; margin-top: 2rem; width: auto;" onclick="app.logout()">Logout & Reset Data</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const APP_VERSION = '3.3.1';
-
-        // --- FULL DATABASE RESTORED ---
-        const SYLLABUS_DB = {
-            prelims: [
-                {
-                    id: 'p-his', name: 'History of India & National Movement', chapters: [
-                        {
-                            name: 'Ancient India',
-                            topics: [
-                                { id: 'p-his-1-1', name: 'Prehistoric Period & Chalcolithic', h: 2 },
-                                { id: 'p-his-1-2', name: 'Indus Valley Civilization', h: 3 },
-                                { id: 'p-his-1-3', name: 'Vedic Period & Mahajanapadas', h: 3 },
-                                { id: 'p-his-1-4', name: 'Buddhism & Jainism', h: 4 },
-                                { id: 'p-his-1-5', name: 'Mauryan & Post-Mauryan Empire', h: 5 },
-                                { id: 'p-his-1-6', name: 'Gupta & Post-Gupta Era', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'Medieval India',
-                            topics: [
-                                { id: 'p-his-2-1', name: 'Early Medieval North & South India', h: 3 },
-                                { id: 'p-his-2-2', name: 'Delhi Sultanate & Regional Kingdoms', h: 5 },
-                                { id: 'p-his-2-3', name: 'Vijayanagara & Bahmani Kingdoms', h: 3 },
-                                { id: 'p-his-2-4', name: 'Mughal Empire & Marathas', h: 6 },
-                                { id: 'p-his-2-5', name: 'Bhakti & Sufi Movements', h: 3 }
-                            ]
-                        },
-                        {
-                            name: 'Modern Indian History',
-                            topics: [
-                                { id: 'p-his-3-1', name: 'Advent of Europeans', h: 2 },
-                                { id: 'p-his-3-2', name: 'British Expansion (1757-1856)', h: 5 },
-                                { id: 'p-his-3-3', name: 'Revolt of 1857 & Reform Movements', h: 4 },
-                                { id: 'p-his-3-4', name: 'Formation of INC & Moderate Phase', h: 3 },
-                                { id: 'p-his-3-5', name: 'Extremist Phase & Swadeshi', h: 4 },
-                                { id: 'p-his-3-6', name: 'Gandhian Era & Mass Movements', h: 10 },
-                                { id: 'p-his-3-7', name: 'Constitutional Developments (1773-1947)', h: 6 }
-                            ]
-                        }
-                    ]
+        const app = {
+            userData: null,
+            progress: {},
+            
+            // --- SYLLABUS DATA ---
+            syllabus: {
+                "Prelims GS Paper 1": {
+                    "History of India": ["Ancient History (NCERT 11th)", "Medieval History (Satish Chandra)", "Modern History (Spectrum)", "Indian National Movement"],
+                    "Polity": ["Preamble & Fundamental Rights", "DPSP & Duties", "Parliament & State Legislature", "Judiciary", "Constitutional Bodies"],
+                    "Geography": ["Physical Geography", "Indian Geography", "Economic Geography", "Resources"],
+                    "Economy": ["National Income", "Banking & Finance", "Budget 2026", "UP Budget"]
                 },
-                {
-                    id: 'p-geo', name: 'Geography (India & World)', chapters: [
-                        {
-                            name: 'Physical Geography',
-                            topics: [
-                                { id: 'p-geo-1-1', name: 'Geomorphology & Earth Movement', h: 4 },
-                                { id: 'p-geo-1-2', name: 'Climatology & World Climate Zones', h: 5 },
-                                { id: 'p-geo-1-3', name: 'Oceanography (Relief, Currents, Salinity)', h: 3 }
-                            ]
-                        },
-                        {
-                            name: 'Indian Geography',
-                            topics: [
-                                { id: 'p-geo-2-1', name: 'Physiography & Drainage Systems', h: 5 },
-                                { id: 'p-geo-2-2', name: 'Climate, Soils & Vegetation', h: 4 },
-                                { id: 'p-geo-2-3', name: 'Agriculture & Mineral Resources', h: 5 }
-                            ]
-                        },
-                        {
-                            name: 'World & Economic Geo',
-                            topics: [
-                                { id: 'p-geo-3-1', name: 'Continents & Mapping', h: 6 },
-                                { id: 'p-geo-3-2', name: 'Human Geography & Demography', h: 3 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'p-pol', name: 'Indian Polity & Governance', chapters: [
-                        {
-                            name: 'Constitutional Framework',
-                            topics: [
-                                { id: 'p-pol-1-1', name: 'Historical Background & Features', h: 4 },
-                                { id: 'p-pol-1-2', name: 'Preamble, FR, DPSP & FD', h: 8 },
-                                { id: 'p-pol-1-3', name: 'Amendment & Basic Structure', h: 3 }
-                            ]
-                        },
-                        {
-                            name: 'System of Government',
-                            topics: [
-                                { id: 'p-pol-2-1', name: 'Parliament & State Legislature', h: 10 },
-                                { id: 'p-pol-2-2', name: 'Union & State Executive', h: 6 },
-                                { id: 'p-pol-2-3', name: 'Judiciary (SC, HC, District)', h: 5 },
-                                { id: 'p-pol-2-4', name: 'Local Government (PRIs & ULBs)', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'Bodies & Dynamics',
-                            topics: [
-                                { id: 'p-pol-3-1', name: 'Constitutional & Non-Const. Bodies', h: 6 },
-                                { id: 'p-pol-3-2', name: 'Elections & Political Parties', h: 3 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'p-eco', name: 'Economic & Social Development', chapters: [
-                        {
-                            name: 'Macro Economics',
-                            topics: [
-                                { id: 'p-eco-1-1', name: 'National Income & Growth', h: 4 },
-                                { id: 'p-eco-1-2', name: 'Inflation & Monetary Policy', h: 5 },
-                                { id: 'p-eco-1-3', name: 'Fiscal Policy & Public Finance', h: 5 }
-                            ]
-                        },
-                        {
-                            name: 'Sectors & Infrastructure',
-                            topics: [
-                                { id: 'p-eco-2-1', name: 'Banking & Financial Markets', h: 6 },
-                                { id: 'p-eco-2-2', name: 'External Sector & BOP', h: 4 },
-                                { id: 'p-eco-2-3', name: 'Agriculture & Industry Sectors', h: 5 }
-                            ]
-                        },
-                        {
-                            name: 'Social Development',
-                            topics: [
-                                { id: 'p-eco-3-1', name: 'Poverty, Unemployment & Inclusion', h: 4 },
-                                { id: 'p-eco-3-2', name: 'Sustainable Dev & Gov Schemes', h: 5 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'p-env', name: 'Environment & Ecology', chapters: [
-                        {
-                            name: 'Ecology & Biodiversity',
-                            topics: [
-                                { id: 'p-env-1-1', name: 'Ecosystem Dynamics & Concepts', h: 4 },
-                                { id: 'p-env-1-2', name: 'Biodiversity & Conservation', h: 5 },
-                                { id: 'p-env-1-3', name: 'Protected Area Network', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'Climate & Pollution',
-                            topics: [
-                                { id: 'p-env-2-1', name: 'Climate Change & Intl Conventions', h: 6 },
-                                { id: 'p-env-2-2', name: 'Environmental Pollution & Acts', h: 4 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'p-sci', name: 'General Science', chapters: [
-                        {
-                            name: 'Physics & Chemistry',
-                            topics: [
-                                { id: 'p-sci-1-1', name: 'Mechanics, Optics & Sound', h: 3 },
-                                { id: 'p-sci-1-2', name: 'Material Science & Reactions', h: 3 }
-                            ]
-                        },
-                        {
-                            name: 'Biology & Biotech',
-                            topics: [
-                                { id: 'p-sci-2-1', name: 'Cell, Genetics & Evolution', h: 4 },
-                                { id: 'p-sci-2-2', name: 'Human Anatomy & Diseases', h: 5 },
-                                { id: 'p-sci-2-3', name: 'Biotech & Nano-technology', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'Space & Defence',
-                            topics: [
-                                { id: 'p-sci-3-1', name: 'ISRO & Satellite Technology', h: 3 },
-                                { id: 'p-sci-3-2', name: 'DRDO & Defence Systems', h: 3 }
-                            ]
-                        }
-                    ]
+                "Mains GS 1-4": {
+                    "GS 1 (Heritage & Geo)": ["Art & Culture", "World History", "Social Issues"],
+                    "GS 2 (Governance)": ["Constitution", "Social Justice", "International Relations"],
+                    "GS 3 (Economy & Environment)": ["Internal Security", "Disaster Management", "S&T"],
+                    "GS 4 (Ethics)": ["Attitude", "Aptitude", "Emotional Intelligence", "Case Studies"]
                 }
+            },
+
+            // --- SAMPLE QUESTIONS (200 Structure) ---
+            questions: [
+                { q: "Who was the first President of Independent India?", a: "Dr. Rajendra Prasad", subject: "History", exp: "He served from 1950 to 1962." },
+                { q: "Which Article of the Constitution deals with Amendment?", a: "Article 368", subject: "Polity", exp: "Part XX of the Indian Constitution contains Article 368." },
+                { q: "Panchayati Raj was first introduced in which state?", a: "Rajasthan", subject: "Polity", exp: "Started in Nagaur district on Oct 2, 1959." },
+                { q: "Critically examine the impact of British Rule on Indian Economy.", a: "Mains Subjective", subject: "History", exp: "Focus on Drain of Wealth theory by Dadabhai Naoroji." }
             ],
-            mains: [
-                {
-                    id: 'm-gs1', name: 'GS1 - History, Society & Geo', chapters: [
-                        {
-                            name: 'Indian Heritage & Culture',
-                            topics: [
-                                { id: 'm-gs1-1-1', name: 'Indian Art Forms (Dance, Music, Puppetry)', h: 5 },
-                                { id: 'm-gs1-1-2', name: 'Literature (Ancient to Modern)', h: 4 },
-                                { id: 'm-gs1-1-3', name: 'Ancient & Medieval Architecture', h: 6 }
-                            ]
-                        },
-                        {
-                            name: 'Modern Indian History',
-                            topics: [
-                                { id: 'm-gs1-2-1', name: 'Middle of 18th Century Events', h: 5 },
-                                { id: 'm-gs1-2-2', name: 'Significant Personalities & Issues', h: 6 },
-                                { id: 'm-gs1-2-3', name: 'Freedom Struggle - Stages & Contributors', h: 10 },
-                                { id: 'm-gs1-2-4', name: 'Post-Independence Consolidation', h: 5 }
-                            ]
-                        },
-                        {
-                            name: 'World History',
-                            topics: [
-                                { id: 'm-gs1-3-1', name: 'Industrial Revolution & World Wars', h: 5 },
-                                { id: 'm-gs1-3-2', name: 'Colonization & Decolonization', h: 4 },
-                                { id: 'm-gs1-3-3', name: 'Communism, Capitalism, Socialism', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'Indian Society',
-                            topics: [
-                                { id: 'm-gs1-4-1', name: 'Salient Features & Diversity of India', h: 3 },
-                                { id: 'm-gs1-4-2', name: 'Role of Women & Women’s Orgs', h: 3 },
-                                { id: 'm-gs1-4-3', name: 'Poverty & Population Issues', h: 4 },
-                                { id: 'm-gs1-4-4', name: 'Globalization & Social Empowerment', h: 4 },
-                                { id: 'm-gs1-4-5', name: 'Communalism, Regionalism & Secularism', h: 3 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'm-gs2', name: 'GS2 - Polity, Gov & IR', chapters: [
-                        {
-                            name: 'Constitution & Polity',
-                            topics: [
-                                { id: 'm-gs2-1-1', name: 'Historical Underpinnings & Basic Structure', h: 5 },
-                                { id: 'm-gs2-1-2', name: 'Union & States - Federal Challenges', h: 6 },
-                                { id: 'm-gs2-1-3', name: 'Separation of Powers & Dispute Mechanism', h: 4 },
-                                { id: 'm-gs2-1-4', name: 'Parliament & State Legislatures', h: 8 },
-                                { id: 'm-gs2-1-5', name: 'Executive, Judiciary & Pressure Groups', h: 6 }
-                            ]
-                        },
-                        {
-                            name: 'Governance & Social Justice',
-                            topics: [
-                                { id: 'm-gs2-2-1', name: 'Representation of People’s Act', h: 3 },
-                                { id: 'm-gs2-2-2', name: 'Constitutional & Statutory Bodies', h: 5 },
-                                { id: 'm-gs2-2-3', name: 'Gov Policies & Welfare Schemes', h: 6 },
-                                { id: 'm-gs2-2-4', name: 'NGOs, SHGs & Civil Services Role', h: 4 },
-                                { id: 'm-gs2-2-5', name: 'Health, Education & HR Issues', h: 5 },
-                                { id: 'm-gs2-2-6', name: 'Transparency, Accountability & E-Gov', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'International Relations',
-                            topics: [
-                                { id: 'm-gs2-3-1', name: 'India and its Neighborhood', h: 6 },
-                                { id: 'm-gs2-3-2', name: 'Bilateral & Regional Groupings', h: 5 },
-                                { id: 'm-gs2-3-3', name: 'Effect of Global Policies on India', h: 4 },
-                                { id: 'm-gs2-3-4', name: 'Important International Institutions', h: 4 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'm-gs3', name: 'GS3 - Economy, S&T, Env', chapters: [
-                        {
-                            name: 'Indian Economy',
-                            topics: [
-                                { id: 'm-gs3-1-1', name: 'Resources, Growth & Employment', h: 5 },
-                                { id: 'm-gs3-1-2', name: 'Inclusive Growth & Gov Budgeting', h: 4 },
-                                { id: 'm-gs3-1-3', name: 'Agriculture - Cropping & Irrigation', h: 6 },
-                                { id: 'm-gs3-1-4', name: 'Subsidies & MSP & PDS', h: 5 },
-                                { id: 'm-gs3-1-5', name: 'Food Processing & Land Reforms', h: 4 },
-                                { id: 'm-gs3-1-6', name: 'Liberalization & Infrastructure', h: 5 },
-                                { id: 'm-gs3-1-7', name: 'Investment Models', h: 3 }
-                            ]
-                        },
-                        {
-                            name: 'Science & Technology',
-                            topics: [
-                                { id: 'm-gs3-2-1', name: 'Indigenization & New Technology', h: 4 },
-                                { id: 'm-gs3-2-2', name: 'IT, Space, Computers & Robotics', h: 5 },
-                                { id: 'm-gs3-2-3', name: 'Nanotech, Biotech & IPR Issues', h: 4 }
-                            ]
-                        },
-                        {
-                            name: 'Environment & Disaster',
-                            topics: [
-                                { id: 'm-gs3-3-1', name: 'Conservation & Pollution', h: 4 },
-                                { id: 'm-gs3-3-2', name: 'Environmental Impact Assessment', h: 3 },
-                                { id: 'm-gs3-3-3', name: 'Disaster & Disaster Management', h: 5 }
-                            ]
-                        },
-                        {
-                            name: 'Internal Security',
-                            topics: [
-                                { id: 'm-gs3-4-1', name: 'Linkages - Development & Extremism', h: 3 },
-                                { id: 'm-gs3-4-2', name: 'Cyber Security & Money Laundering', h: 4 },
-                                { id: 'm-gs3-4-3', name: 'Security Challenges & Management', h: 5 }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 'm-gs4', name: 'GS4 - Ethics', chapters: [
-                        {
-                            name: 'Foundations of Ethics',
-                            topics: [
-                                { id: 'm-gs4-1-1', name: 'Ethics & Human Interface', h: 6 },
-                                { id: 'm-gs4-1-2', name: 'Attitude - Content & Behavior', h: 5 },
-                                { id: 'm-gs4-1-3', name: 'Emotional Intelligence - Utility', h: 4 },
-                                { id: 'm-gs4-1-4', name: 'Contribution of Moral Thinkers', h: 6 }
-                            ]
-                        },
-                        {
-                            name: 'Ethics in Governance',
-                            topics: [
-                                { id: 'm-gs4-2-1', name: 'Public Service Values & Ethics', h: 6 },
-                                { id: 'm-gs4-2-2', name: 'Probity in Governance', h: 5 },
-                                { id: 'm-gs4-2-3', name: 'Case Studies on Ethics', h: 10 }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
 
-        const ROUTES = [
-            { id: 'dashboard', icon: '🏠', label: 'Dashboard' },
-            { id: 'editorial', icon: '📰', label: 'Daily Editorial' },
-            { id: 'questions', icon: '❓', label: 'Question Bank' },
-            { id: 'syllabus', icon: '📚', label: 'Syllabus Tracker' },
-            { id: 'planner', icon: '📅', label: 'Study Planner' },
-            { id: 'analytics', icon: '📊', label: 'Analytics' },
-            { id: 'books', icon: '📕', label: 'Resources' },
-            { id: 'settings', icon: '⚙️', label: 'Settings' }
-        ];
-
-        const CURRENT_AFFAIRS = [
-            { cat: "Governance", title: "Digital Personal Data Protection Act, 2023", desc: "A landmark bill aiming to protect the privacy of personal data in India." },
-            { cat: "Economy", title: "India's GDP Performance", desc: "New fiscal reports suggest a steady 7.5% growth trajectory for the upcoming quarter." },
-            { cat: "History", title: "Iron Age in India", desc: "Recent excavations in Tamil Nadu push the date of the Iron Age in India back to 2172 BCE." },
-            { cat: "Science", title: "ISRO's XPoSat", desc: "India's first dedicated polarimetry mission to study black holes and neutron stars." }
-        ];
-
-        const BOOK_DB = [
-            { title: "Indian Polity", author: "M. Laxmikanth", subj: "Polity", desc: "The 'Bible' for Polity. Covers foundations and advanced concepts." },
-            { title: "Modern India", author: "Spectrum - Rajiv Ahir", subj: "History", desc: "Concise yet comprehensive for the freedom struggle." },
-            { title: "Ancient India", author: "RS Sharma", subj: "History", desc: "Detailed coverage of early Indian history and culture." },
-            { title: "Medieval India", author: "Satish Chandra", subj: "History", desc: "Standard text for the Sultanate and Mughal periods." },
-            { title: "Indian Art & Culture", author: "Nitin Singhania", subj: "History", desc: "Extremely useful for visual and performing arts sections." },
-            { title: "Physical Geography", author: "GC Leong", subj: "Geography", desc: "Essential for physical geography concepts and climate." },
-            { title: "Indian Economy", author: "Nitin Singhania / Ramesh Singh", subj: "Economy", desc: "Covers dynamic and static portions of the economy." },
-            { title: "Environment", author: "Shankar IAS", subj: "Environment", desc: "Highly recommended for ecology and biodiversity." },
-            { title: "Science & Technology", author: "Ravi P. Agrahari", subj: "S&T", desc: "Covers latest developments and standard concepts." },
-            { title: "Ethics, Integrity & Aptitude", author: "Lexicon / G. Subba Rao", subj: "Ethics", desc: "Framework for Case Studies and theoretical ethics." },
-            { title: "Internal Security", author: "Ashok Kumar", subj: "Security", desc: "Covers extremism, cyber security, and border management." },
-            { title: "International Relations", author: "Pavneet Singh", subj: "IR", desc: "Chronological analysis of India's foreign policy." },
-            { title: "Indian Society", author: "Ram Ahuja / NCERT Class 12", subj: "Society", desc: "Covers social issues, urbanization, and diversity." },
-            { title: "Physical Geography NCERT", author: "Class 11", subj: "Geography", desc: "The most important NCERT for clearing basic concepts." }
-        ];
-
-        const PRACTICE_DB = {
-            prelims: [
-                {
-                    subj: "Economy",
-                    q: "Which of the following bodies is responsible for the implementation of the PM-KUSUM scheme?",
-                    options: ["MNRE", "Ministry of Agriculture", "NITI Aayog", "NABARD"],
-                    ans: "MNRE",
-                    exp: "The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) is implemented by the Ministry of New and Renewable Energy (MNRE)."
-                },
-                {
-                    subj: "History",
-                    q: "Which Indus Valley site is famous for the discovery of a 'Dockyard'?",
-                    options: ["Harappa", "Mohenjodaro", "Lothal", "Dholavira"],
-                    ans: "Lothal",
-                    exp: "Lothal in Gujarat was the vital trade port of the IVC, featuring the world's earliest known artificial dock."
-                },
-                {
-                    subj: "Polity",
-                    q: "Under which Article of the Indian Constitution is the 'Right to Privacy' protected?",
-                    options: ["Article 14", "Article 19", "Article 21", "Article 25"],
-                    ans: "Article 21",
-                    exp: "In Justice K.S. Puttaswamy v. Union of India (2017), the SC declared Privacy a fundamental right under Art 21 (Right to Life & Liberty)."
-                },
-                {
-                    subj: "Environment",
-                    q: "The 'Montreal Protocol' is specifically related to which of the following?",
-                    options: ["Global Warming", "Ozone Layer Depletion", "Persistent Organic Pollutants", "Wetland Conservation"],
-                    ans: "Ozone Layer Depletion",
-                    exp: "The Montreal Protocol is a global agreement to protect the Earth's ozone layer by phasing out the chemicals that deplete it."
-                },
-                {
-                    subj: "Geography",
-                    q: "Which river is known as the 'Dakshin Ganga'?",
-                    options: ["Krishna", "Cauvery", "Godavari", "Mahanadi"],
-                    ans: "Godavari",
-                    exp: "Godavari is the largest peninsular river and is often called Dakshin Ganga due to its size and spiritual significance."
-                }
+            // --- EDITORIALS ---
+            editorials: [
+                { title: "Digital India Act 2026", summary: "A look into the new legal framework for the internet.", points: "Privacy, Cyber Security, AI Ethics.", relevance: "GS Paper 3" },
+                { title: "Indo-Pacific Security", summary: "Rising tensions and diplomatic maneuvers.", points: "QUAD, Trade, Maritime security.", relevance: "GS Paper 2" }
             ],
-            mains: [
-                {
-                    subj: "Polity",
-                    q: "Evaluate the role of the Governor in the Indian federal system, with special reference to the discretionary powers exercised in recent times.",
-                    hl: ["Art 163 (Discretionary Powers)", "S.R. Bommai Case", "Punchhi Commission Recommendations", "Conflict with Elected Executives"]
-                },
-                {
-                    subj: "Ethics",
-                    q: "Discuss the importance of Emotional Intelligence in public administration. How does it help a civil servant handle crisis situations?",
-                    hl: ["Self-awareness & Regulation", "Empathy in Public Service", "Conflict Resolution", "Decision Making under Pressure"]
+
+            init() {
+                const stored = localStorage.getItem('uppsc_user');
+                if (stored) {
+                    this.userData = JSON.parse(stored);
+                    this.progress = JSON.parse(localStorage.getItem('uppsc_progress') || '{}');
+                    this.showDashboard();
                 }
-            ]
-        };
-
-        const TEST_SERIES = [
-            { name: "Abhyaas Prelims 2025", provider: "Vision IAS", link: "https://visionias.in/" },
-            { name: "Insta Prelims Test Series", provider: "Insights IAS", link: "https://www.insightsonindia.com/" }
-        ];
-
-        const SAMPLE_PAPERS = [
-            { type: "Mains 2024 - GS 1", link: "https://www.drishtiias.com/free-downloads/previous-year-papers" },
-            { type: "Prelims 2024 - Paper 1", link: "https://www.upsc.gov.in/examinations/previous-question-papers" }
-        ];
-
-        const EDITORIAL_DB = [
-            {
-                id: 1, lang: "Hindi", tag: "International",
-                title: "भारत-यूरोपीय संघ संबंधों का सुदृढीकरण",
-                summary: "भारत और यूरोपीय संघ के बीच हालिया सहयोग और रणनीतिक साझेदारी का विश्लेषण। यह व्यापार, सुरक्षा और जलवायु परिवर्तन के क्षेत्रों में द्विपक्षीय संबंधों के महत्व को दर्शाता है।",
-                full: "यूरोपीय संघ भारत का तीसरा सबसे बड़ा व्यापारिक भागीदार है। हालिया 'फ्री ट्रेड एग्रीमेंट' (FTA) वार्ताएं दोनों पक्षों के लिए आर्थिक विकास के नए द्वार खोल सकती हैं। इसके अलावा, हिंद-प्रशांत क्षेत्र में सुरक्षा सहयोग को बढ़ाना दोनों के साझा हितों में शामिल है।",
-                link: "https://www.drishtiias.com/hindi/editorial/strengthening-eu-india-relations"
+                this.renderSyllabus();
+                this.generateTimetable();
             },
-            {
-                id: 2, lang: "English", tag: "Constitution",
-                title: "Redrawing Power: The Delimitation Challenge After 2027",
-                summary: "Analysis of the upcoming delimitation exercise based on the next census and its impact on federal representation.",
-                full: "Delimitation is the act of redrawing boundaries of Lok Sabha and Assembly seats. The current freeze on seats exists until 2026. Data shows significant population growth in Northern states vs Southern states. If seats are redistributed purely on population, South India might lose proportional representation.",
-                link: "https://www.prsindia.org/the-prs-blog"
-            }
-        ];
 
-        const firebaseConfig = { apiKey: "AIzaSy_REPLACE_ME", authDomain: "demo.firebaseapp.com", projectId: "demo", storageBucket: "demo.appspot.com", messagingSenderId: "123", appId: "1:123" };
-        let db = null, auth = null, isCloudEnabled = false;
+            register() {
+                const name = document.getElementById('user-name').value;
+                const year = document.getElementById('exam-year').value;
+                const date = document.getElementById('start-date').value;
 
-        try {
-            if (firebaseConfig.apiKey.includes("REPLACE_ME")) {
-                console.warn("Firebase API Key is missing. Running in Local-Only Mode.");
-            } else {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                auth = firebase.auth();
-                isCloudEnabled = true;
-            }
-        } catch (e) {
-            console.error("Firebase Initialization Failed:", e);
-        }
+                if (!name || !date) return alert("Please fill all fields");
 
-        const Store = {
-            get: (k) => {
-                try {
-                    const val = localStorage.getItem(k);
-                    if (!val || val === "undefined") return null;
-                    return JSON.parse(val);
-                } catch (e) { return null; }
+                this.userData = { name, year, date };
+                localStorage.setItem('uppsc_user', JSON.stringify(this.userData));
+                this.showDashboard();
             },
-            set: (k, v) => {
-                localStorage.setItem(k, JSON.stringify(v));
+
+            showDashboard() {
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.getElementById('welcome-text').innerText = `Hello, ${this.userData.name}`;
+                this.updateProgressUI();
+                this.renderTodayTasks();
+                this.loadRandomQuiz();
+                this.loadMoreEditorials();
             },
-            init: async () => {
-                try {
-                    Render.sidebar();
-                    if (!Store.get('upsc_user')) Render.setup();
-                    else await Render.dashboard();
-                } catch (e) {
-                    console.error("Dashboard Startup Error:", e);
-                    // Critical Recovery: Attempt to show setup if dashboard crashes
-                    try { Render.setup(); } catch (e2) { }
-                    alert("⚠️ UPSC Dashboard failed to start. We are attempting recovery. Error: " + e.message);
-                }
-            }
-        };
 
-        const Auth = {
-            loginProc: async () => {
-                if (!isCloudEnabled) return alert("Firebase is NOT configured. Please add your API key to use cloud login.");
-                const e = document.getElementById('login-email').value, p = document.getElementById('login-password').value;
-                try {
-                    await auth.signInWithEmailAndPassword(e, p);
-                    // One-time Fetch on Login
-                    const snap = await db.collection("users").doc(auth.currentUser.uid).collection("data").get();
-                    snap.forEach(doc => localStorage.setItem(doc.id, JSON.stringify(doc.data().value)));
-                    alert("Data fetched successfully! Welcome back.");
-                    await Render.dashboard();
-                } catch (err) { alert(err.message); }
+            navigate(tab) {
+                document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+                document.getElementById(`tab-${tab}`).style.display = 'block';
+                document.querySelectorAll('#menu li').forEach(li => li.classList.remove('active'));
+                event.target.classList.add('active');
             },
-            signupProc: async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('setup-name').value;
-                const year = document.getElementById('setup-year').value;
-                const hours = document.getElementById('setup-hours').value;
-                const email = document.getElementById('setup-email').value;
-                const pass = document.getElementById('setup-password').value;
 
-                const user = { name, year, hours, joined: Date.now() };
-
-                // LOGIC: If Cloud is Disabled OR Email is Empty, Proceed Locally
-                if (!isCloudEnabled || !email || !pass) {
-                    Store.set('upsc_user', user);
-                    console.log("Registered in Local-Only Mode.");
-                    return await Render.dashboard();
-                }
-
-                try {
-                    const cred = await auth.createUserWithEmailAndPassword(email, pass);
-                    Store.set('upsc_user', { ...user, uid: cred.user.uid });
-                    alert("Cloud Account Created! Your data will be backup-ready.");
-                } catch (err) {
-                    alert("Cloud setup failed: " + err.message + ". Proceeding in local mode.");
-                    Store.set('upsc_user', user);
-                }
-                await Render.dashboard();
-            },
-            manualBackup: async () => {
-                if (!isCloudEnabled) return alert("Cloud Backup requires a valid Firebase configuration.");
-                if (!auth?.currentUser) return alert("Log in first to enable backups.");
-                const keys = ['upsc_user', 'upsc_progress', 'upsc_plan', 'upsc_study_hours', 'upsc_notes'];
-                try {
-                    for (const k of keys) {
-                        const val = Store.get(k);
-                        if (val) await db.collection("users").doc(auth.currentUser.uid).collection("data").doc(k).set({ value: val, ts: Date.now() });
+            renderSyllabus() {
+                let html = '';
+                for (let section in this.syllabus) {
+                    html += `<div class="syllabus-item">
+                        <div class="syllabus-header" onclick="app.toggleCollapse(this)">${section} <span>▼</span></div>
+                        <div class="syllabus-content">`;
+                    for (let sub in this.syllabus[section]) {
+                        html += `<strong>${sub}</strong><br>`;
+                        this.syllabus[section][sub].forEach(chapter => {
+                            const cid = btoa(chapter).substring(0, 10);
+                            const checked = this.progress[cid] ? 'checked' : '';
+                            html += `<div class="chapter">
+                                <input type="checkbox" onchange="app.trackProgress('${cid}', this.checked)" ${checked}> ${chapter}
+                            </div>`;
+                        });
                     }
-                    alert("Backup complete! Your current progress is saved to the cloud.");
-                } catch (err) { alert("Backup failed: " + err.message); }
-            }
-        };
-
-        const PlannerEngine = {
-            generate: () => {
-                const user = Store.get('upsc_user');
-                if (!user) return alert("Setup your profile first!");
-                const plan = {}, today = new Date();
-                let currentDay = new Date(today), allTopics = [];
-                [...SYLLABUS_DB.prelims, ...SYLLABUS_DB.mains].forEach(s => s.chapters.forEach(c => c.topics.forEach(t => allTopics.push({ ...t, subject: s.name }))));
-
-                const dailyLimit = parseFloat(user.hours) || 8;
-                let currentDayHours = 0, currentDayTasks = [];
-
-                allTopics.forEach(topic => {
-                    const day = currentDay.getDay();
-                    if (day === 6 || day === 0) { // Saturday or Sunday
-                        currentDay.setDate(currentDay.getDate() + 1);
-                        return; // Skip weekend in standard plan
-                    }
-                    if (currentDayHours + topic.h > dailyLimit && currentDayTasks.length > 0) {
-                        plan[currentDay.toISOString().split('T')[0]] = currentDayTasks;
-                        currentDay.setDate(currentDay.getDate() + 1);
-                        currentDayHours = 0; currentDayTasks = [];
-                    }
-                    currentDayTasks.push(topic); currentDayHours += topic.h;
-                });
-                if (currentDayTasks.length > 0) plan[currentDay.toISOString().split('T')[0]] = currentDayTasks;
-                Store.set('upsc_plan', plan);
-                alert("AI Strategy Generated! Standard days planned. Weekends reserved for Intensive Practice.");
-                Render.planner();
-            },
-            getWeekendTasks: () => {
-                const day = new Date().getDay();
-                if (day === 6) return [{ id: 'weekend-pyq', name: 'Full-Length PYQ Practice Set', subject: 'SATURDAY INTENSIVE', h: 3, type: 'pyq' }];
-                if (day === 0) return [{ id: 'weekend-mains', name: 'Mains Essay & Answer Writing', subject: 'SUNDAY WRITING', h: 4, type: 'mains' }];
-                return [];
-            }
-        };
-
-        const Render = {
-            setup: () => {
-                document.getElementById('setup-overlay').classList.remove('hidden');
-                document.getElementById('setup-form').onsubmit = Auth.signupProc;
-            },
-            sidebar: () => {
-                const navHtml = ROUTES.map(r => `
-                    <div class="nav-link" id="nav-${r.id}" onclick="Render.${r.id}()"><span>${r.icon}</span> ${r.label}</div>
-                `).join('');
-                document.getElementById('nav-items').innerHTML = navHtml;
-                // Sync Mobile Nav (Only important links)
-                const mobileRoutes = ['dashboard', 'editorial', 'questions', 'syllabus', 'planner'];
-                document.getElementById('mobile-nav').innerHTML = ROUTES.filter(r => mobileRoutes.includes(r.id)).map(r => `
-                    <div class="nav-link" id="mob-nav-${r.id}" onclick="Render.${r.id}()"><span>${r.icon}</span> ${r.label.split(' ')[0]}</div>
-                `).join('');
-            },
-            dashboard: async () => {
-                UI.closeSetup(); UI.setActiveNav('dashboard');
-
-                // --- DEPENDENCY GUARD (v3.33) ---
-                if (!window.QuestionService || !window.ContentService) {
-                    document.getElementById('main-content').innerHTML = `<div class="card" style="border-top:4px solid var(--danger); text-align:center; padding:4rem;"><h1 style="color:var(--danger)">⚠️ Data Script Missing</h1><p class="mt-4 text-secondary"><b>upsc_data_v3.js</b> not found. Ensure it is uploaded to GitHub in the same folder.</p><button class="btn btn-primary mt-8" onclick="window.location.reload()">🔄 Retry</button></div>`;
-                    return;
+                    html += `</div></div>`;
                 }
-
-                const user = Store.get('upsc_user'), prog = Actions.calculateProgress();
-
-                try {
-                    const liveEssay = await window.ContentService.fetchEssayTopic();
-                    const liveEditorial = await window.ContentService.fetchEditorial();
-                    await window.QuestionService.syncLiveQuestions();
-                    const isWeekend = [0, 6].includes(new Date().getDay());
-
-                    if (liveEditorial) window.currentEditorial = liveEditorial;
-                    else window.currentEditorial = EDITORIAL_DB[new Date().getDate() % EDITORIAL_DB.length];
-
-                    document.getElementById('main-content').innerHTML = `
-                        <div class="motivational-quote" style="border-left:5px solid ${isWeekend ? 'var(--accent-primary)' : 'var(--success)'}; background:linear-gradient(90deg, var(--banner-bg), transparent);">
-                            <div class="type-label">${isWeekend ? 'WEEKEND INTENSIVE ACTIVE' : 'Internet-Fetched Essay Prompt'}</div><br>
-                            <h2 class="quote-text">${isWeekend ? 'Strategic Practice & Revision Focus' : liveEssay}</h2>
-                        </div>
-
-                        <header class="flex justify-between items-center mb-10">
-                            <div><h1 class="text-2xl font-bold">Aspirant: ${user.name} ${isWeekend ? '🔥' : '🎯'}</h1><p class="text-secondary">${isWeekend ? 'Intensive Practice Mode' : 'Consistency is Key'}</p></div>
-                            <div style="text-align:right"><div class="text-lg font-bold">${new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</div><div class="text-sm text-accent">Goal: ${user.hours}h</div></div>
-                        </header>
-
-                        <h2 class="mb-6">🎯 ${isWeekend ? 'Weekend Drills' : 'Daily Practice'}</h2>
-                        <div class="grid-3 mb-10">
-                            ${isWeekend ? `
-                            <div class="card" style="border-top:4px solid var(--accent-primary); grid-column: span 2;">
-                                <div class="badge badge-high mb-2">PYQ MOCK SET</div>
-                                <h3>Previous Year Questions</h3>
-                                <p class="text-sm text-secondary mb-4">Solve curated PYQs (2018-2024). Focus on accuracy and elimination.</p>
-                                <button class="btn btn-primary" onclick="Render.questions(0, '')">🚀 Start Saturday Mock</button>
-                            </div>` : `
-                            <div class="card" style="border-top:4px solid var(--accent-primary)">
-                                <div class="badge badge-med mb-2">Prelims MCQ</div>
-                                <p class="text-sm font-bold">${(window.currentMcq = window.QuestionService.getRandomMcq()).q}</p>
-                                <div class="flex-col gap-2 mt-4">${window.currentMcq.options.map(o => `<button class="btn btn-outline w-full text-xs mb-2" onclick="Actions.checkMcq('${o}', this)">${o}</button>`).join('')}</div>
-                            </div>`}
-                            ${!isWeekend ? `
-                            <div class="card" style="border-top:4px solid var(--warning)">
-                                <div class="badge badge-med mb-2">Mains Question</div>
-                                <p class="text-sm font-bold">${(window.currentMains = (UPSC_DATA.mains[Math.floor(Math.random() * UPSC_DATA.mains.length)])).q}</p>
-                                <button class="btn btn-primary w-full mt-4 text-xs" onclick="alert('Structure drafted!')">Structure Answer</button>
-                            </div>` : `
-                            <div class="card" style="border-top:4px solid var(--warning)">
-                                 <div class="badge badge-high mb-2">WRITING DRILL</div>
-                                 <h3 class="text-sm">Essay: ${liveEssay.substring(0, 50)}...</h3>
-                                 <button class="btn btn-primary w-full text-xs mt-4" onclick="alert('Proceeding...')">✍️ Practice Writing</button>
-                            </div>`}
-                            <div class="card" style="background:var(--bg-primary); border:1px dashed var(--border-color)">
-                                <h3>📌 Quick Note</h3>
-                                <textarea class="form-input w-full mt-3 text-xs" placeholder="Jot down quick thoughts..." style="min-height:100px;"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="grid-3">
-                            <div class="card"><h3>📊 Progress</h3><div class="text-4xl font-bold text-success">${prog}%</div><div class="progress-bar mt-4"><div style="width:${prog}%; height:100%; background:var(--success)"></div></div></div>
-                            <div class="card"><h3>🗞️ Editorial</h3><h4 class="font-bold line-clamp-2">${window.currentEditorial.title}</h4><button class="btn btn-primary w-full mt-4 text-xs" onclick="Render.editorial()">📝 Read Summary</button></div>
-                            <div class="card"><h3>⏱️ Timer</h3><div id="pomo-clock" class="text-4xl font-bold text-accent">25:00</div><button class="btn btn-primary w-full mt-4" onclick="Actions.startTimer()">Start Pomodoro</button></div>
-                        </div>
-                    `;
-                } catch (e) {
-                    console.error(e);
-                    alert("Dashboard Update Error: " + e.message);
-                }
+                document.getElementById('syllabus-container').innerHTML = html;
             },
-            editorial: () => {
-                UI.setActiveNav('editorial');
-                const art = window.currentEditorial || EDITORIAL_DB[0];
-                document.getElementById('main-content').innerHTML = `<div class="card" style="max-width:800px; margin:2rem auto; padding:3rem;"><span class="badge badge-low mb-4">Editorial Analysis</span><h1>${art.title}</h1><div class="p-6 rounded-lg my-8" style="background:rgba(0,0,0,0.02); border-left:4px solid var(--accent-primary);"><p>${art.summary}</p></div><div class="flex gap-4"><a href="${art.link}" target="_blank" class="btn btn-outline text-xs">Original Source</a><button class="btn btn-primary text-xs" onclick="alert('Saved!')">📝 Save Gist</button></div></div>`;
+
+            toggleCollapse(el) {
+                const content = el.nextElementSibling;
+                content.style.display = content.style.display === 'block' ? 'none' : 'block';
             },
-            syllabus: () => {
-                UI.setActiveNav('syllabus');
-                const prog = Store.get('upsc_progress') || {}, mode = window.syllabusMode || 'prelims';
-                let html = `<div class="flex justify-between items-center mb-8"><h1>Syllabus</h1><div class="flex gap-2"><button class="btn ${mode === 'prelims' ? 'btn-primary' : ''}" onclick="window.syllabusMode='prelims'; Render.syllabus()">Prelims</button><button class="btn ${mode === 'mains' ? 'btn-primary' : ''}" onclick="window.syllabusMode='mains'; Render.syllabus()">Mains</button></div></div>`;
-                SYLLABUS_DB[mode].forEach(sub => {
-                    let done = 0, total = 0; sub.chapters.forEach(c => c.topics.forEach(t => { total++; if (prog[t.id]) done++; }));
-                    const pct = total ? Math.round((done / total) * 100) : 0;
-                    html += `<div class="card p-0 mb-4 overflow-hidden"><div class="p-4 flex justify-between items-center bg-primary" style="cursor:pointer" onclick="this.nextElementSibling.classList.toggle('hidden')"><div><b>${sub.name}</b> <small>${done}/${total}</small></div><b>${pct}%</b></div><div class="p-4 hidden">${sub.chapters.map(c => `<div class="mb-4"><b>${c.name}</b>${c.topics.map(t => `<div class="p-2 border-b flex justify-between items-center"><span class="text-sm">${t.name}</span><input type="checkbox" ${prog[t.id] ? 'checked' : ''} onclick="Actions.toggleTask('${t.id}', this.checked); Render.syllabus()"></div>`).join('')}</div>`).join('')}</div></div>`;
+
+            trackProgress(id, val) {
+                this.progress[id] = val;
+                localStorage.setItem('uppsc_progress', JSON.stringify(this.progress));
+                this.updateProgressUI();
+            },
+
+            updateProgressUI() {
+                const total = document.querySelectorAll('.chapter input').length || 100;
+                const completed = Object.values(this.progress).filter(v => v).length;
+                const pct = Math.round((completed / total) * 100);
+                document.getElementById('overall-pct').innerText = pct + '%';
+            },
+
+            renderTodayTasks() {
+                const tasks = ["Read Laxmikanth Ch 1-3", "Analyze GS 1 PYQs", "Daily Current Affairs (Jan 2026)"];
+                let html = '';
+                tasks.forEach(t => {
+                    html += `<div class="task-item"><input type="checkbox"> <span>${t}</span></div>`;
                 });
-                document.getElementById('main-content').innerHTML = html;
+                document.getElementById('today-tasks-list').innerHTML = html;
             },
-            planner: () => {
-                UI.setActiveNav('planner');
-                const plan = Store.get('upsc_plan'), today = new Date().toISOString().split('T')[0], isWeekly = window.showWeeklyView || false;
-                let html = `<div class="flex justify-between items-center mb-6"><h1>Strategy</h1><div><button class="btn text-xs mr-2" onclick="window.showWeeklyView=false; Render.planner()">Today</button><button class="btn text-xs" onclick="window.showWeeklyView=true; Render.planner()">Weekly</button></div></div>`;
-                if (!plan) html += `<div class="card text-center p-10"><button class="btn btn-primary" onclick="PlannerEngine.generate()">Generate Plan</button></div>`;
-                else {
-                    const tasks = plan[today] || [];
-                    html += `<div class="card"><h3>${isWeekly ? 'Weekly Overview' : 'Today (Syllabus)'}</h3><div class="mt-4">${tasks.map(t => `<div class="p-3 mb-2 border rounded flex justify-between bg-secondary"><span>${t.name}</span><input type="checkbox" onclick="Actions.toggleTask('${t.id}', this.checked); Render.planner()"></div>`).join('')}</div></div>`;
-                }
-                document.getElementById('main-content').innerHTML = html;
-            },
-            questions: (offset = 0) => {
-                UI.setActiveNav('questions');
-                const mcqs = window.QuestionService.getMCQs(10, offset);
-                document.getElementById('main-content').innerHTML = `<div class="card"><h1>Question Bank</h1><div class="mt-6">${mcqs.map(q => `<div class="p-4 border-b"><b>${q.q}</b><div class="flex gap-2 mt-2">${q.options.map(o => `<button class="btn btn-outline text-xs">${o}</button>`).join('')}</div></div>`).join('')}</div><div class="mt-6 flex gap-4"><button class="btn btn-outline" onclick="Render.questions(${offset - 10})">Prev</button><button class="btn btn-primary" onclick="Render.questions(${offset + 10})">Next</button></div></div>`;
-            },
-            books: () => { Render.editorial(); } // Shortcut
-        };
 
-        const Actions = {
-            toggleTask: (tid, check) => {
-                const p = Store.get('upsc_progress') || {}; p[tid] = check;
-                Store.set('upsc_progress', p);
+            generateTimetable() {
+                let html = '';
+                for (let i = 1; i <= 7; i++) {
+                    html += `<div class="card">
+                        <h4>Day ${i}</h4>
+                        <p>Subject: History</p>
+                        <small>Ref: NCERT Class 11th</small>
+                        <p style="font-size:0.8rem; color:var(--text-muted)">Chapter: Stone Age to Indus Valley</p>
+                    </div>`;
+                }
+                document.getElementById('calendar-view').innerHTML = html;
             },
-            calculateProgress: () => {
-                const p = Store.get('upsc_progress') || {};
-                let total = 0, done = 0;
-                [...SYLLABUS_DB.prelims, ...SYLLABUS_DB.mains].forEach(s => {
-                    s.chapters.forEach(ch => { total += ch.topics.length; ch.topics.forEach(t => { if (p[t.id]) done++; }); });
+
+            loadRandomQuiz() {
+                let html = '';
+                this.questions.sort(() => Math.random() - 0.5).forEach((q, i) => {
+                    html += `<div class="question-card">
+                        <p><strong>Q${i+1}:</strong> ${q.q}</p>
+                        <button class="btn" style="width:auto; padding: 5px 10px; margin-top:5px" onclick="this.nextElementSibling.style.display='block'">Show Answer</button>
+                        <div class="answer-explanation">Ans: ${q.a} <br> <small>${q.exp}</small></div>
+                    </div>`;
                 });
-                return total ? Math.round((done / total) * 100) : 0;
+                document.getElementById('quiz-container').innerHTML = html;
             },
-            startTimer: () => {
-                let s = 1500; const clock = document.getElementById('pomo-clock'); if (!clock) return;
-                const itv = setInterval(() => {
-                    s--; if (s <= 0) { clearInterval(itv); alert("Done!"); clock.innerText = "25:00"; return; }
-                    clock.innerText = `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
-                }, 1000);
+
+            loadMoreEditorials() {
+                let html = '';
+                this.editorials.forEach(e => {
+                    html += `<div class="card" style="margin-bottom:1rem">
+                        <h3>${e.title}</h3>
+                        <p>${e.summary}</p>
+                        <div style="margin-top:10px; font-size:0.8rem; color:var(--primary)">Relevance: ${e.relevance}</div>
+                    </div>`;
+                });
+                document.getElementById('editorial-list').innerHTML = html;
             },
-            toggleTheme: () => document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'),
-            checkMcq: (opt, btn) => {
-                const q = window.currentMcq; if (opt === q.ans) { btn.className = "btn btn-primary w-full text-xs mt-2"; alert("Correct!"); }
-                else { btn.className = "btn btn-danger w-full text-xs mt-2"; alert("Correct was: " + q.ans); }
+
+            toggleDarkMode() {
+                const theme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.body.setAttribute('data-theme', theme);
+            },
+
+            search(query) {
+                // Basic logic to filter visible cards
+                const cards = document.querySelectorAll('.chapter, .question-card');
+                cards.forEach(card => {
+                    card.style.display = card.innerText.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+                });
+            },
+
+            logout() {
+                if(confirm("This will clear all your progress. Continue?")) {
+                    localStorage.clear();
+                    location.reload();
+                }
             }
         };
 
-        const UI = {
-            toggleAuth: (login) => {
-                document.getElementById('login-flow').classList.toggle('hidden', !login);
-                document.getElementById('setup-form').classList.toggle('hidden', login);
-                document.getElementById('setup-title').innerText = login ? "Welcome Back" : "Begin Your Journey";
-            },
-            closeSetup: () => document.getElementById('setup-overlay').classList.add('hidden'),
-            setActiveNav: (id) => {
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                document.getElementById('nav-' + id)?.classList.add('active');
-                document.getElementById('mob-nav-' + id)?.classList.add('active');
-                // Auto-scroll to top on navigation
-                document.getElementById('main-content').scrollTop = 0;
-            }
-        };
-
-        Store.init();
+        // Initialize App
+        app.init();
     </script>
 </body>
-
 </html>
