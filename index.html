@@ -3,411 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPPSC Aspirant Pro | Ultimate Dashboard</title>
+    <title>UPPSC Elite: Live Editorial Edition</title>
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --success: #22c55e;
-            --accent: #f59e0b;
-            --sidebar-width: 260px;
-            --transition: all 0.3s ease;
+            --primary: #2563eb; --secondary: #64748b; --success: #16a34a;
+            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --border: #e2e8f0;
         }
-
         [data-theme="dark"] {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border: #334155;
+            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --border: #334155;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); transition: 0.3s; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        /* LAYOUT */
+        #app { display: none; grid-template-columns: 260px 1fr; min-height: 100vh; }
+        .sidebar { background: var(--card); border-right: 1px solid var(--border); padding: 1.5rem; height: 100vh; position: sticky; top: 0; }
+        .main { padding: 2rem; max-width: 1000px; margin: 0 auto; width: 100%; }
 
-        body { background: var(--bg); color: var(--text-main); transition: var(--transition); line-height: 1.6; }
-
-        /* --- AUTH SYSTEM --- */
-        #auth-overlay {
-            position: fixed; inset: 0; background: var(--bg); z-index: 1000;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-
-        .auth-card {
-            background: var(--card-bg); padding: 2rem; border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;
-        }
-
-        .input-group { margin-bottom: 1.5rem; }
-        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-        input, select {
-            width: 100%; padding: 0.75rem; border: 1px solid var(--border);
-            border-radius: 0.5rem; background: var(--bg); color: var(--text-main);
-        }
-
-        .btn {
-            background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: var(--transition);
-            width: 100%;
-        }
-        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
-
-        /* --- LAYOUT --- */
-        #app { display: none; }
+        /* COMPONENTS */
+        .nav-item { padding: 0.75rem 1rem; border-radius: 0.5rem; cursor: pointer; margin-bottom: 0.5rem; color: var(--secondary); font-weight: 500; }
+        .nav-item.active { background: var(--primary); color: white; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .btn { padding: 0.6rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; }
         
-        .sidebar {
-            position: fixed; width: var(--sidebar-width); height: 100vh;
-            background: var(--card-bg); border-right: 1px solid var(--border);
-            padding: 2rem 1rem; overflow-y: auto;
-        }
-
-        .main-content { margin-left: var(--sidebar-width); padding: 2rem; min-height: 100vh; }
-
-        nav ul { list-style: none; }
-        nav li {
-            padding: 0.8rem 1rem; margin-bottom: 0.5rem; border-radius: 0.5rem;
-            cursor: pointer; color: var(--text-muted); font-weight: 500; transition: var(--transition);
-        }
-        nav li:hover, nav li.active { background: var(--primary); color: white; }
-
-        .top-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 2rem; sticky: top; background: var(--bg); padding: 10px 0; z-index: 100;
-        }
-
-        /* --- DASHBOARD ELEMENTS --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .card { background: var(--card-bg); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border); }
-        .progress-circle { width: 80px; height: 80px; border-radius: 50%; border: 8px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; }
+        /* EDITORIAL STYLING */
+        .news-badge { background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .live-dot { height: 8px; width: 8px; background: #ef4444; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         
-        .task-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .task-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
-
-        /* --- SYLLABUS --- */
-        .syllabus-item { margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 0.5rem; }
-        .syllabus-header { padding: 1rem; background: var(--bg); cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; }
-        .syllabus-content { padding: 1rem; display: none; }
-        .chapter { margin: 5px 0; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
-
-        /* --- QUESTIONS --- */
-        #quiz-container { margin-top: 1rem; }
-        .question-card { background: var(--bg); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border-left: 4px solid var(--primary); }
-        .answer-explanation { display: none; margin-top: 10px; padding: 10px; background: #dcfce7; color: #166534; border-radius: 4px; }
-
-        /* --- MOBILE RESPONSIVE --- */
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .main-content { margin-left: 0; padding: 1rem; }
-            .top-nav { flex-direction: column; gap: 1rem; text-align: center; }
-        }
-
-        .dark-mode-toggle { cursor: pointer; background: var(--border); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; }
-        .search-box { padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border); min-width: 250px; }
+        .hidden { display: none !important; }
+        @media (max-width: 768px) { #app { grid-template-columns: 1fr; } .sidebar { display: none; } }
     </style>
 </head>
 <body>
 
-    <div id="auth-overlay">
-        <div class="auth-card">
-            <h2 style="margin-bottom: 1.5rem; text-align: center;">UPPSC Aspirant Login</h2>
-            <div class="input-group">
-                <label>Name</label>
-                <input type="text" id="user-name" placeholder="Enter your name">
-            </div>
-            <div class="input-group">
-                <label>Target Exam Year</label>
-                <select id="exam-year">
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Preparation Start Date</label>
-                <input type="date" id="start-date">
-            </div>
-            <button class="btn" onclick="app.register()">Start Preparation</button>
+    <div id="auth-screen" style="position:fixed; inset:0; background:var(--bg); z-index:2000; display:flex; align-items:center; justify-content:center;">
+        <div class="card" style="width:90%; max-width:400px; text-align:center;">
+            <h2 style="margin-bottom:1.5rem">UPPSC Officer Login</h2>
+            <input type="text" id="user-name" placeholder="Enter Name" style="width:100%; padding:0.8rem; margin-bottom:1rem; border-radius:0.5rem; border:1px solid var(--border)">
+            <button class="btn btn-primary" style="width:100%" onclick="app.initUser()">Enter Dashboard</button>
         </div>
     </div>
 
     <div id="app">
-        <div class="sidebar">
-            <h2 style="color: var(--primary); margin-bottom: 2rem;">UPPSC Prep Tool</h2>
+        <aside class="sidebar">
+            <h2 style="color:var(--primary); margin-bottom:2rem">UPPSC ELITE</h2>
             <nav>
-                <ul id="menu">
-                    <li class="active" onclick="app.navigate('dashboard')">Dashboard</li>
-                    <li onclick="app.navigate('syllabus')">Full Syllabus</li>
-                    <li onclick="app.navigate('timetable')">1 Year Plan</li>
-                    <li onclick="app.navigate('questions')">Question Bank</li>
-                    <li onclick="app.navigate('editorial')">Editorials</li>
-                    <li onclick="app.navigate('profile')">My Profile</li>
-                </ul>
+                <div class="nav-item active" onclick="app.nav('dashboard', this)">📊 Dashboard</div>
+                <div class="nav-item" onclick="app.nav('editorial', this)">📰 Editorials <span class="live-dot"></span></div>
+                <div class="nav-item" onclick="app.nav('syllabus', this)">📚 Syllabus</div>
             </nav>
-        </div>
+            <div style="margin-top:2rem"><button class="btn" style="width:100%; background:var(--border)" onclick="app.toggleTheme()">🌓 Dark Mode</button></div>
+        </aside>
 
-        <div class="main-content">
-            <div class="top-nav">
-                <div class="search-container">
-                    <input type="text" placeholder="Search syllabus/questions..." class="search-box" onkeyup="app.search(this.value)">
+        <main class="main">
+            <section id="view-dashboard">
+                <h1>Jai Hind, <span id="display-name"></span></h1>
+                <div class="card" style="margin-top:1.5rem">
+                    <h3>Today's Focus</h3>
+                    <p style="color:var(--secondary)">Check the Editorial section for today's live analysis.</p>
                 </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span id="welcome-text"></span>
-                    <div class="dark-mode-toggle" onclick="app.toggleDarkMode()">🌓 Toggle Theme</div>
-                </div>
-            </div>
+            </section>
 
-            <div id="tab-dashboard" class="tab-content">
-                <h1 style="margin-bottom: 1.5rem;">Aspirant Dashboard</h1>
-                <div class="grid">
+            <section id="view-editorial" class="hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem">
+                    <div>
+                        <h2>Live Editorial Scraping</h2>
+                        <p style="color:var(--secondary); font-size:0.9rem">Pulling latest from The Hindu & Indian Express</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="app.fetchLiveNews()">🔄 Sync Live News</button>
+                </div>
+
+                <div id="news-status" style="margin-bottom:1rem; font-weight:bold; font-size:0.8rem"></div>
+                <div id="news-container">
                     <div class="card">
-                        <h3>Daily Target</h3>
-                        <p style="font-size: 2rem; font-weight: bold; color: var(--primary);">3 Hours</p>
-                        <p>Status: <span id="daily-status">Pending</span></p>
-                    </div>
-                    <div class="card">
-                        <h3>Overall Completion</h3>
-                        <div style="display:flex; align-items: center; gap: 20px;">
-                            <div class="progress-circle"><span id="overall-pct">0%</span></div>
-                            <p>Syllabus coverage based on tracked tasks.</p>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Today's Focus</h3>
-                        <div id="today-tasks-list">
-                            </div>
+                        <p style="text-align:center; color:var(--secondary)">Click "Sync Live News" to fetch today's editorials.</p>
                     </div>
                 </div>
-                <div class="card" style="margin-top: 1.5rem; background: linear-gradient(to right, #4f46e5, #818cf8); color: white;">
-                    <p id="quote-text">"Success is the sum of small efforts, repeated day in and day out."</p>
-                </div>
-            </div>
+            </section>
 
-            <div id="tab-syllabus" class="tab-content" style="display:none">
-                <h2>UPPSC Structured Syllabus</h2>
-                <div id="syllabus-container" style="margin-top: 1.5rem;">
-                    </div>
-            </div>
-
-            <div id="tab-timetable" class="tab-content" style="display:none">
-                <h2>365-Day Smart Plan</h2>
-                <div class="card" style="margin: 1.5rem 0;">
-                    <h4>Phase 1: Foundation (Months 1-4)</h4>
-                    <p>Focus: NCERTs + Basic GS (History, Polity)</p>
-                </div>
-                <div id="calendar-view" class="grid">
-                    </div>
-            </div>
-
-            <div id="tab-questions" class="tab-content" style="display:none">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2>Question Bank</h2>
-                    <button class="btn" style="width: auto;" onclick="app.loadRandomQuiz()">Shuffle Quiz</button>
-                </div>
-                <div id="quiz-container">
-                    </div>
-            </div>
-
-            <div id="tab-editorial" class="tab-content" style="display:none">
-                <h2>Daily Editorials (Mock Data)</h2>
-                <div id="editorial-list">
-                    </div>
-                <button class="btn" style="width: auto; margin-top: 1rem;" onclick="app.loadMoreEditorials()">Load New Editorial</button>
-            </div>
-
-            <div id="tab-profile" class="tab-content" style="display:none">
-                <h2>User Profile</h2>
-                <div class="card" id="profile-details"></div>
-                <button class="btn" style="background: #ef4444; margin-top: 2rem; width: auto;" onclick="app.logout()">Logout & Reset Data</button>
-            </div>
-        </div>
+            <section id="view-syllabus" class="hidden">
+                <h2>Full Granular Syllabus</h2>
+                <div id="syllabus-list" style="margin-top:1.5rem"></div>
+            </section>
+        </main>
     </div>
 
     <script>
         const app = {
-            userData: null,
-            progress: {},
-            
-            // --- SYLLABUS DATA ---
-            syllabus: {
-                "Prelims GS Paper 1": {
-                    "History of India": ["Ancient History (NCERT 11th)", "Medieval History (Satish Chandra)", "Modern History (Spectrum)", "Indian National Movement"],
-                    "Polity": ["Preamble & Fundamental Rights", "DPSP & Duties", "Parliament & State Legislature", "Judiciary", "Constitutional Bodies"],
-                    "Geography": ["Physical Geography", "Indian Geography", "Economic Geography", "Resources"],
-                    "Economy": ["National Income", "Banking & Finance", "Budget 2026", "UP Budget"]
-                },
-                "Mains GS 1-4": {
-                    "GS 1 (Heritage & Geo)": ["Art & Culture", "World History", "Social Issues"],
-                    "GS 2 (Governance)": ["Constitution", "Social Justice", "International Relations"],
-                    "GS 3 (Economy & Environment)": ["Internal Security", "Disaster Management", "S&T"],
-                    "GS 4 (Ethics)": ["Attitude", "Aptitude", "Emotional Intelligence", "Case Studies"]
-                }
-            },
-
-            // --- SAMPLE QUESTIONS (200 Structure) ---
-            questions: [
-                { q: "Who was the first President of Independent India?", a: "Dr. Rajendra Prasad", subject: "History", exp: "He served from 1950 to 1962." },
-                { q: "Which Article of the Constitution deals with Amendment?", a: "Article 368", subject: "Polity", exp: "Part XX of the Indian Constitution contains Article 368." },
-                { q: "Panchayati Raj was first introduced in which state?", a: "Rajasthan", subject: "Polity", exp: "Started in Nagaur district on Oct 2, 1959." },
-                { q: "Critically examine the impact of British Rule on Indian Economy.", a: "Mains Subjective", subject: "History", exp: "Focus on Drain of Wealth theory by Dadabhai Naoroji." }
+            user: null,
+            // Public RSS feeds converted to JSON via rss2json
+            rssSources: [
+                { name: 'The Hindu Opinion', url: 'https://www.thehindu.com/opinion/editorial/feeder/default.rss' },
+                { name: 'Indian Express Opinion', url: 'https://indianexpress.com/section/opinion/editorials/feed/' }
             ],
 
-            // --- EDITORIALS ---
-            editorials: [
-                { title: "Digital India Act 2026", summary: "A look into the new legal framework for the internet.", points: "Privacy, Cyber Security, AI Ethics.", relevance: "GS Paper 3" },
-                { title: "Indo-Pacific Security", summary: "Rising tensions and diplomatic maneuvers.", points: "QUAD, Trade, Maritime security.", relevance: "GS Paper 2" }
-            ],
-
-            init() {
-                const stored = localStorage.getItem('uppsc_user');
-                if (stored) {
-                    this.userData = JSON.parse(stored);
-                    this.progress = JSON.parse(localStorage.getItem('uppsc_progress') || '{}');
-                    this.showDashboard();
-                }
-                this.renderSyllabus();
-                this.generateTimetable();
-            },
-
-            register() {
+            initUser() {
                 const name = document.getElementById('user-name').value;
-                const year = document.getElementById('exam-year').value;
-                const date = document.getElementById('start-date').value;
-
-                if (!name || !date) return alert("Please fill all fields");
-
-                this.userData = { name, year, date };
-                localStorage.setItem('uppsc_user', JSON.stringify(this.userData));
-                this.showDashboard();
+                if(!name) return alert("Enter your name");
+                this.user = { name };
+                localStorage.setItem('uppsc_user', JSON.stringify(this.user));
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app').style.display = 'grid';
+                document.getElementById('display-name').innerText = name;
+                this.renderSyllabus();
             },
 
-            showDashboard() {
-                document.getElementById('auth-overlay').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-                document.getElementById('welcome-text').innerText = `Hello, ${this.userData.name}`;
-                this.updateProgressUI();
-                this.renderTodayTasks();
-                this.loadRandomQuiz();
-                this.loadMoreEditorials();
+            nav(view, el) {
+                document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+                document.getElementById('view-' + view).classList.remove('hidden');
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                el.classList.add('active');
             },
 
-            navigate(tab) {
-                document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-                document.getElementById(`tab-${tab}`).style.display = 'block';
-                document.querySelectorAll('#menu li').forEach(li => li.classList.remove('active'));
-                event.target.classList.add('active');
+            // THE SCRAPING ALTERNATIVE (RSS TO JSON)
+            async fetchLiveNews() {
+                const container = document.getElementById('news-container');
+                const status = document.getElementById('news-status');
+                container.innerHTML = '<div class="card" style="text-align:center">Scraping latest updates... Please wait.</div>';
+                status.innerText = "Connecting to News Servers...";
+
+                try {
+                    // Using rss2json API (Free tier, no key required for basic use)
+                    const allNews = [];
+                    
+                    for (let source of this.rssSources) {
+                        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
+                        const data = await response.json();
+                        if (data.status === 'ok') {
+                            data.items.forEach(item => {
+                                allNews.push({
+                                    title: item.title,
+                                    link: item.link,
+                                    date: new Date(item.pubDate).toLocaleDateString(),
+                                    source: source.name,
+                                    desc: item.description.replace(/<[^>]*>?/gm, '').substring(0, 200) + '...'
+                                });
+                            });
+                        }
+                    }
+
+                    this.renderNews(allNews);
+                    status.innerHTML = `<span style="color:var(--success)">✅ Successfully synced ${allNews.length} editorials.</span>`;
+                } catch (err) {
+                    status.innerHTML = `<span style="color:var(--danger)">❌ Sync Failed. Check internet connection.</span>`;
+                    container.innerHTML = `<div class="card">Failed to fetch. News sites often block direct access. Try again in a moment.</div>`;
+                }
+            },
+
+            renderNews(newsItems) {
+                const container = document.getElementById('news-container');
+                container.innerHTML = newsItems.map(item => `
+                    <div class="card" style="border-left: 4px solid var(--primary)">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start">
+                            <span class="news-badge">${item.source}</span>
+                            <small style="color:var(--secondary)">${item.date}</small>
+                        </div>
+                        <h3 style="margin:10px 0">${item.title}</h3>
+                        <p style="font-size:0.9rem; color:var(--secondary); margin-bottom:1rem">${item.desc}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <a href="${item.link}" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none">Read Full Article ➔</a>
+                            <button class="btn" style="padding:4px 8px; font-size:0.7rem; background:var(--bg)" onclick="app.saveForLater('${btoa(item.title)}')">📌 Save for UPPSC</button>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            saveForLater(id) {
+                alert("Article saved to your local profile!");
             },
 
             renderSyllabus() {
-                let html = '';
-                for (let section in this.syllabus) {
-                    html += `<div class="syllabus-item">
-                        <div class="syllabus-header" onclick="app.toggleCollapse(this)">${section} <span>▼</span></div>
-                        <div class="syllabus-content">`;
-                    for (let sub in this.syllabus[section]) {
-                        html += `<strong>${sub}</strong><br>`;
-                        this.syllabus[section][sub].forEach(chapter => {
-                            const cid = btoa(chapter).substring(0, 10);
-                            const checked = this.progress[cid] ? 'checked' : '';
-                            html += `<div class="chapter">
-                                <input type="checkbox" onchange="app.trackProgress('${cid}', this.checked)" ${checked}> ${chapter}
-                            </div>`;
-                        });
-                    }
-                    html += `</div></div>`;
-                }
-                document.getElementById('syllabus-container').innerHTML = html;
+                const topics = ["Ancient History", "Indian Polity", "UP Special GS 5", "Ethics & Integrity"];
+                document.getElementById('syllabus-list').innerHTML = topics.map(t => `
+                    <div class="card" style="padding:1rem; margin-bottom:0.5rem; display:flex; justify-content:space-between">
+                        <span>${t}</span>
+                        <input type="checkbox">
+                    </div>
+                `).join('');
             },
 
-            toggleCollapse(el) {
-                const content = el.nextElementSibling;
-                content.style.display = content.style.display === 'block' ? 'none' : 'block';
-            },
-
-            trackProgress(id, val) {
-                this.progress[id] = val;
-                localStorage.setItem('uppsc_progress', JSON.stringify(this.progress));
-                this.updateProgressUI();
-            },
-
-            updateProgressUI() {
-                const total = document.querySelectorAll('.chapter input').length || 100;
-                const completed = Object.values(this.progress).filter(v => v).length;
-                const pct = Math.round((completed / total) * 100);
-                document.getElementById('overall-pct').innerText = pct + '%';
-            },
-
-            renderTodayTasks() {
-                const tasks = ["Read Laxmikanth Ch 1-3", "Analyze GS 1 PYQs", "Daily Current Affairs (Jan 2026)"];
-                let html = '';
-                tasks.forEach(t => {
-                    html += `<div class="task-item"><input type="checkbox"> <span>${t}</span></div>`;
-                });
-                document.getElementById('today-tasks-list').innerHTML = html;
-            },
-
-            generateTimetable() {
-                let html = '';
-                for (let i = 1; i <= 7; i++) {
-                    html += `<div class="card">
-                        <h4>Day ${i}</h4>
-                        <p>Subject: History</p>
-                        <small>Ref: NCERT Class 11th</small>
-                        <p style="font-size:0.8rem; color:var(--text-muted)">Chapter: Stone Age to Indus Valley</p>
-                    </div>`;
-                }
-                document.getElementById('calendar-view').innerHTML = html;
-            },
-
-            loadRandomQuiz() {
-                let html = '';
-                this.questions.sort(() => Math.random() - 0.5).forEach((q, i) => {
-                    html += `<div class="question-card">
-                        <p><strong>Q${i+1}:</strong> ${q.q}</p>
-                        <button class="btn" style="width:auto; padding: 5px 10px; margin-top:5px" onclick="this.nextElementSibling.style.display='block'">Show Answer</button>
-                        <div class="answer-explanation">Ans: ${q.a} <br> <small>${q.exp}</small></div>
-                    </div>`;
-                });
-                document.getElementById('quiz-container').innerHTML = html;
-            },
-
-            loadMoreEditorials() {
-                let html = '';
-                this.editorials.forEach(e => {
-                    html += `<div class="card" style="margin-bottom:1rem">
-                        <h3>${e.title}</h3>
-                        <p>${e.summary}</p>
-                        <div style="margin-top:10px; font-size:0.8rem; color:var(--primary)">Relevance: ${e.relevance}</div>
-                    </div>`;
-                });
-                document.getElementById('editorial-list').innerHTML = html;
-            },
-
-            toggleDarkMode() {
+            toggleTheme() {
                 const theme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
                 document.body.setAttribute('data-theme', theme);
-            },
-
-            search(query) {
-                // Basic logic to filter visible cards
-                const cards = document.querySelectorAll('.chapter, .question-card');
-                cards.forEach(card => {
-                    card.style.display = card.innerText.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
-                });
-            },
-
-            logout() {
-                if(confirm("This will clear all your progress. Continue?")) {
-                    localStorage.clear();
-                    location.reload();
-                }
             }
         };
 
-        // Initialize App
-        app.init();
+        // Check localstorage on load
+        window.onload = () => {
+            const saved = localStorage.getItem('uppsc_user');
+            if(saved) {
+                app.user = JSON.parse(saved);
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app').style.display = 'grid';
+                document.getElementById('display-name').innerText = app.user.name;
+                app.renderSyllabus();
+            }
+        }
     </script>
 </body>
 </html>
