@@ -5,103 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UPPSC SDM Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="upsc_data_v3.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 1rem; }
-        .progress-bar { transition: width 1s ease-in-out; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        .hero-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 pb-20">
 
-    <div class="max-w-md mx-auto space-y-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">UPPSC <span class="text-blue-600">SDM</span> Portal</h1>
-            <button onclick="location.reload()" class="text-gray-500 hover:text-blue-600">
-                <i class="fa-solid fa-rotate-right"></i>
+    <div class="max-w-md mx-auto space-y-5">
+        <div class="flex justify-between items-center py-2">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">UPPSC <span class="text-blue-600">SDM</span></h1>
+                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Target 2026 • Ranker Level</p>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                <i class="fas fa-user-tie"></i>
+            </div>
+        </div>
+
+        <div id="main-card" class="hero-gradient text-white p-6 rounded-[2rem] shadow-xl shadow-blue-200/50">
+            <div class="flex justify-between items-start">
+                <span id="date-label" class="bg-white/20 text-[10px] px-3 py-1 rounded-full backdrop-blur-md">Today's Topic</span>
+                <span id="paper-tag" class="text-xs font-bold text-yellow-300 uppercase tracking-widest">GS-V</span>
+            </div>
+            
+            <h2 id="topic-title" class="text-3xl font-bold mt-4 mb-2 leading-tight">Loading Topic...</h2>
+            <p id="subtopic-detail" class="text-blue-100 text-sm opacity-90 line-clamp-3">Syllabus details will appear here from upsc_data_v3.js.</p>
+            
+            <div class="mt-6 flex gap-4">
+                <div class="flex-1 bg-white/10 p-3 rounded-2xl border border-white/10 text-center">
+                    <p class="text-[9px] uppercase opacity-70">Consistency</p>
+                    <p class="text-sm font-bold">🔥 100%</p>
+                </div>
+                <div class="flex-1 bg-white/10 p-3 rounded-2xl border border-white/10 text-center">
+                    <p class="text-[9px] uppercase opacity-70">Status</p>
+                    <p id="status-tag" class="text-sm font-bold">Pending</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass p-5 rounded-2xl border border-slate-200">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Related Context & Insights</h3>
+            <div class="flex items-start gap-3">
+                <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <p id="related-topic" class="text-sm text-slate-700 font-medium pt-1">Loading related links...</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="h-2 w-2 bg-orange-500 rounded-full animate-pulse"></span>
+                <h3 class="text-sm font-bold text-slate-800 tracking-tight">Prelims MCQ Challenge</h3>
+            </div>
+            <p id="mcq-question" class="text-sm text-slate-600 mb-4 leading-relaxed">Checking for today's question...</p>
+            <button onclick="showAns()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all active:scale-95">
+                Check Correct Answer
             </button>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-700 to-indigo-900 text-white p-6 rounded-3xl shadow-xl">
-            <div class="flex justify-between items-start mb-4">
-                <span id="display-date" class="bg-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">Sunday, 26 April</span>
-                <i class="fa-solid fa-bullseye text-yellow-400"></i>
-            </div>
-            <h2 id="topic-title" class="text-3xl font-bold mb-2">Ancient India</h2>
-            <p id="subtopic-text" class="text-blue-100 text-sm leading-relaxed mb-4">
-                Prehistory, Indus Valley: town planning, economy, and art.
-            </p>
-            <div class="flex items-center space-x-2 text-xs text-blue-200">
-                <i class="fa-solid fa-book-open"></i>
-                <span id="reference-text">NCERT 6-12 + RS Sharma</span>
+            <div id="ans-box" class="hidden mt-3 p-4 bg-green-50 text-green-700 text-xs font-bold rounded-xl border border-green-100 text-center">
+                Correct Answer: <span id="ans-text">-</span>
             </div>
         </div>
 
-        <div class="glass-card p-5 shadow-sm border border-gray-100">
-            <div class="flex justify-between mb-2 text-sm font-semibold text-gray-600">
-                <span>Consistency Meter</span>
-                <span id="progress-percent">0.8%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div id="progress-fill" class="bg-green-500 h-2.5 rounded-full progress-bar" style="width: 0.8%"></div>
-            </div>
-            <p class="text-[10px] text-gray-400 mt-2 italic">Status: <span id="status-text" class="text-green-600 font-bold">On Fire 🔥</span></p>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-            <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fa-solid fa-link text-blue-500 mr-2"></i>Related Context</h3>
-            <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                <p id="related-topic" class="text-sm text-blue-800 font-medium">Art & Culture (Post-Mauryan), UP History (Belan Valley)</p>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-            <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fa-solid fa-pen-to-square text-orange-500 mr-2"></i>Daily MCQ</h3>
-            <p id="mcq-question" class="text-gray-600 text-sm mb-4">Which site in UP provides evidence of the transition from Neolithic to Bronze Age?</p>
-            <button onclick="toggleAnswer()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold transition">
-                Show Answer
-            </button>
-            <p id="mcq-answer" class="hidden mt-3 p-3 bg-green-50 text-green-700 text-xs font-bold rounded-lg border border-green-100">
-                Correct Answer: Lahuradewa (Sant Kabir Nagar)
-            </p>
-        </div>
-
-        <button onclick="markDone()" class="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-transform">
-            Mark Today as Completed ✅
+        <button onclick="completeTask()" class="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-bold text-sm shadow-lg active:scale-95 transition-all">
+            Mark Topic as Done ✅
         </button>
     </div>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <script>
-        // Data derived from your UPPSC Plan
-        const studyData = {
-            date: "2026-04-26",
-            topic: "Ancient India",
-            subtopic: "Prehistory, Indus Valley: town planning, economy, art",
-            ref: "NCERT 6-12 + RS Sharma",
-            related: "Art & Culture (Temple Arch.), UP History (Belan Valley)",
-            mcq: "Which Harappan site in UP is known for its evidence of cotton cloth?",
-            ans: "Alamgirpur (Meerut)",
-            progress: "0.8%"
-        };
+        // Logic to integrate with upsc_data_v3.js
+        function loadDashboard() {
+            // Get today's date in YYYY-MM-DD format
+            // Since your plan is future-dated (2026), we use the first available date for demo
+            const targetDate = "2026-04-26"; 
+            
+            // Accessing studyPlan variable from upsc_data_v3.js
+            const todayData = studyPlan.find(item => item.date === targetDate) || studyPlan[0];
 
-        // Initialize UI
-        document.getElementById('topic-title').innerText = studyData.topic;
-        document.getElementById('subtopic-text').innerText = studyData.subtopic;
-        document.getElementById('reference-text').innerText = studyData.ref;
-        document.getElementById('related-topic').innerText = studyData.related;
-        document.getElementById('mcq-question').innerText = studyData.mcq;
-        document.getElementById('mcq-answer').innerText = "Ans: " + studyData.ans;
-
-        function toggleAnswer() {
-            const ans = document.getElementById('mcq-answer');
-            ans.classList.toggle('hidden');
+            if (todayData) {
+                document.getElementById('topic-title').innerText = todayData.topic;
+                document.getElementById('subtopic-detail').innerText = todayData.subtopic;
+                document.getElementById('paper-tag').innerText = todayData.paper || "UPPSC";
+                document.getElementById('related-topic').innerText = "Link with: " + (todayData.related || "Current UP Affairs");
+                document.getElementById('mcq-question').innerText = todayData.mcq || "Refer to Ghatna Chakra for today's MCQ.";
+                document.getElementById('ans-text').innerText = todayData.ans || "Refer to Notes";
+                
+                // Highlight if it's UP Special Paper 5 or 6
+                if(todayData.paper === 'GS-V' || todayData.paper === 'GS-VI') {
+                    document.getElementById('main-card').classList.replace('from-blue-700', 'from-orange-600');
+                    document.getElementById('paper-tag').classList.add('text-white');
+                }
+            }
         }
 
-        function markDone() {
-            alert("Congratulations! Target for " + studyData.topic + " achieved.");
-            document.getElementById('status-text').innerText = "Goal Met! 🏆";
+        function showAns() {
+            const box = document.getElementById('ans-box');
+            box.classList.toggle('hidden');
         }
+
+        function completeTask() {
+            document.getElementById('status-tag').innerText = "DONE";
+            document.getElementById('status-tag').classList.add('text-green-300');
+            alert("Excellent! Your UPPSC preparation is on track for SDM.");
+        }
+
+        // Initialize when page loads
+        window.onload = loadDashboard;
     </script>
 </body>
 </html>
