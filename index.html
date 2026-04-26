@@ -3,122 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPPSC SDM Tracker</title>
+    <title>UPPSC SDM RANKER PORTAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="upsc_data_v3.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap');
-        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
-        .hero-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; background: #f1f5f9; }
+        .up-special-card { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); }
+        .gs-card { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
     </style>
 </head>
-<body class="p-4 pb-20">
-
-    <div class="max-w-md mx-auto space-y-5">
-        <div class="flex justify-between items-center py-2">
+<body class="p-4">
+    <div class="max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">UPPSC <span class="text-blue-600">SDM</span></h1>
-                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Target 2026 • Ranker Level</p>
+                <h1 class="text-2xl font-bold text-slate-900">UPPSC <span class="text-orange-600">SDM</span></h1>
+                <p class="text-[10px] tracking-widest text-slate-500 font-bold uppercase">Ranker Tracking Portal</p>
             </div>
-            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                <i class="fas fa-user-tie"></i>
+            <div id="consistency-tag" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">
+                CONSISTENT 🔥
             </div>
         </div>
 
-        <div id="main-card" class="hero-gradient text-white p-6 rounded-[2rem] shadow-xl shadow-blue-200/50">
+        <div id="task-container" class="gs-card text-white p-6 rounded-[2.5rem] shadow-2xl mb-6 transition-all">
             <div class="flex justify-between items-start">
-                <span id="date-label" class="bg-white/20 text-[10px] px-3 py-1 rounded-full backdrop-blur-md">Today's Topic</span>
-                <span id="paper-tag" class="text-xs font-bold text-yellow-300 uppercase tracking-widest">GS-V</span>
+                <span id="date-text" class="bg-white/20 px-3 py-1 rounded-full text-[10px]">Date: 2026-04-26</span>
+                <span id="paper-badge" class="font-bold text-yellow-400 text-sm">GS-I</span>
             </div>
             
-            <h2 id="topic-title" class="text-3xl font-bold mt-4 mb-2 leading-tight">Loading Topic...</h2>
-            <p id="subtopic-detail" class="text-blue-100 text-sm opacity-90 line-clamp-3">Syllabus details will appear here from upsc_data_v3.js.</p>
+            <h2 id="topic-title" class="text-3xl font-bold mt-4 leading-tight">Loading Plan...</h2>
+            <p id="subtopic-detail" class="text-blue-100 text-sm mt-2 opacity-90 italic">Data is being synced...</p>
             
-            <div class="mt-6 flex gap-4">
-                <div class="flex-1 bg-white/10 p-3 rounded-2xl border border-white/10 text-center">
-                    <p class="text-[9px] uppercase opacity-70">Consistency</p>
-                    <p class="text-sm font-bold">🔥 100%</p>
+            <div class="mt-8 grid grid-cols-2 gap-3">
+                <div class="bg-white/10 p-3 rounded-2xl border border-white/5">
+                    <p class="text-[9px] opacity-60 uppercase">Revision</p>
+                    <p class="text-xs font-bold">D1/D7/D21 Mode</p>
                 </div>
-                <div class="flex-1 bg-white/10 p-3 rounded-2xl border border-white/10 text-center">
-                    <p class="text-[9px] uppercase opacity-70">Status</p>
-                    <p id="status-tag" class="text-sm font-bold">Pending</p>
+                <div class="bg-white/10 p-3 rounded-2xl border border-white/5">
+                    <p class="text-[9px] opacity-60 uppercase">Progress</p>
+                    <p id="progress-val" class="text-xs font-bold">Calculating...</p>
                 </div>
             </div>
         </div>
 
-        <div class="glass p-5 rounded-2xl border border-slate-200">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Related Context & Insights</h3>
-            <div class="flex items-start gap-3">
-                <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <p id="related-topic" class="text-sm text-slate-700 font-medium pt-1">Loading related links...</p>
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 mb-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Related Topic Insight</h3>
+            <div class="flex gap-3 items-start">
+                <div class="bg-orange-100 p-2 rounded-xl text-orange-600">⚡</div>
+                <p id="related-insight" class="text-sm text-slate-700 font-medium">Link this with UP Special Current Affairs.</p>
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="h-2 w-2 bg-orange-500 rounded-full animate-pulse"></span>
-                <h3 class="text-sm font-bold text-slate-800 tracking-tight">Prelims MCQ Challenge</h3>
-            </div>
-            <p id="mcq-question" class="text-sm text-slate-600 mb-4 leading-relaxed">Checking for today's question...</p>
-            <button onclick="showAns()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all active:scale-95">
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 mb-6">
+            <h4 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Prelims MCQ Challenge</h4>
+            <p id="mcq-q" class="text-slate-800 text-sm font-semibold mb-4 leading-relaxed">No question found.</p>
+            <button onclick="reveal()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
                 Check Correct Answer
             </button>
-            <div id="ans-box" class="hidden mt-3 p-4 bg-green-50 text-green-700 text-xs font-bold rounded-xl border border-green-100 text-center">
-                Correct Answer: <span id="ans-text">-</span>
+            <div id="ans-box" class="hidden mt-3 p-3 bg-green-50 text-green-700 text-xs font-bold rounded-xl text-center border border-green-100">
+                Answer: <span id="mcq-a">-</span>
             </div>
         </div>
 
-        <button onclick="completeTask()" class="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-bold text-sm shadow-lg active:scale-95 transition-all">
-            Mark Topic as Done ✅
+        <button onclick="markDone()" class="w-full py-5 bg-slate-900 text-white rounded-[2rem] font-bold shadow-xl active:scale-95 transition-transform">
+            Complete Today's Topic ✅
         </button>
     </div>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <script>
-        // Logic to integrate with upsc_data_v3.js
-        function loadDashboard() {
-            // Get today's date in YYYY-MM-DD format
-            // Since your plan is future-dated (2026), we use the first available date for demo
-            const targetDate = "2026-04-26"; 
-            
-            // Accessing studyPlan variable from upsc_data_v3.js
-            const todayData = studyPlan.find(item => item.date === targetDate) || studyPlan[0];
+        // Critical: Linking your uploaded 'upsc_data_v3.js'
+        function syncDashboard() {
+            // Hum aaj ki date check kar rahe hain (Plan 2026 ke hisab se setup hai)
+            const target = "2026-04-26"; 
+            const dayData = studyPlan.find(d => d.date === target) || studyPlan[0];
 
-            if (todayData) {
-                document.getElementById('topic-title').innerText = todayData.topic;
-                document.getElementById('subtopic-detail').innerText = todayData.subtopic;
-                document.getElementById('paper-tag').innerText = todayData.paper || "UPPSC";
-                document.getElementById('related-topic').innerText = "Link with: " + (todayData.related || "Current UP Affairs");
-                document.getElementById('mcq-question').innerText = todayData.mcq || "Refer to Ghatna Chakra for today's MCQ.";
-                document.getElementById('ans-text').innerText = todayData.ans || "Refer to Notes";
+            if (dayData) {
+                document.getElementById('topic-title').innerText = dayData.topic;
+                document.getElementById('subtopic-detail').innerText = dayData.subtopic;
+                document.getElementById('paper-badge').innerText = dayData.paper;
+                document.getElementById('date-text').innerText = "Date: " + dayData.date;
+                document.getElementById('mcq-q').innerText = dayData.mcq;
+                document.getElementById('mcq-a').innerText = dayData.ans;
+                document.getElementById('related-insight').innerText = "Related to: " + (dayData.related || "UP General Studies");
                 
-                // Highlight if it's UP Special Paper 5 or 6
-                if(todayData.paper === 'GS-V' || todayData.paper === 'GS-VI') {
-                    document.getElementById('main-card').classList.replace('from-blue-700', 'from-orange-600');
-                    document.getElementById('paper-tag').classList.add('text-white');
+                // Consistency & Progress
+                const idx = studyPlan.indexOf(dayData) + 1;
+                const prog = ((idx / studyPlan.length) * 100).toFixed(1);
+                document.getElementById('progress-val').innerText = prog + "% Done";
+
+                // UP Special Focus: Paper V and VI logic
+                if (dayData.paper === 'GS-V' || dayData.paper === 'GS-VI') {
+                    document.getElementById('task-container').className = "up-special-card text-white p-6 rounded-[2.5rem] shadow-2xl mb-6 transition-all";
                 }
             }
         }
 
-        function showAns() {
-            const box = document.getElementById('ans-box');
-            box.classList.toggle('hidden');
+        function reveal() {
+            document.getElementById('ans-box').classList.toggle('hidden');
         }
 
-        function completeTask() {
-            document.getElementById('status-tag').innerText = "DONE";
-            document.getElementById('status-tag').classList.add('text-green-300');
-            alert("Excellent! Your UPPSC preparation is on track for SDM.");
+        function markDone() {
+            alert("Goal Achieved for " + document.getElementById('topic-title').innerText + "! SDM Journey Continues.");
         }
 
-        // Initialize when page loads
-        window.onload = loadDashboard;
+        window.onload = syncDashboard;
     </script>
 </body>
 </html>
