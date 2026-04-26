@@ -1,64 +1,107 @@
-import pandas as pd
-from datetime import datetime
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPPSC SDM Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 1rem; }
+        .progress-bar { transition: width 1s ease-in-out; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
 
-def get_uppsc_insights(topic):
-    # UP-specific logic for MCQs and Mains
-    insights = {
-        "Ancient India": {
-            "MCQ": "Focus on Harappan sites in UP (Alamgirpur) and Neolithic sites (Belan Valley).",
-            "Long": "Discuss the impact of the Ganga Valley on the rise of Mahajanapadas.",
-            "Concurrent": "Check recent excavations at Sinauli (Baghpat) and its impact on Indian history."
-        },
-        "Letter Writing": {
-            "MCQ": "Review formal salutations used in 'Ardh-Sashkiya Patra'.",
-            "Long": "Draft an Office Memo (Karyalay Gyap) regarding employee discipline.",
-            "Concurrent": "Relate to 'e-Sarkar' portal and digital move of files in UP Secretariat."
-        },
-        "UP Economy Special": {
-            "MCQ": "Memorize the ODOP product for districts like Gorakhpur (Terracotta) and Kannauj (Perfume).",
-            "Long": "Examine the role of MSMEs in making UP a 1-Trillion Dollar economy.",
-            "Concurrent": "Analyze the latest UP Industrial Policy 2024-25 highlights."
+    <div class="max-w-md mx-auto space-y-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">UPPSC <span class="text-blue-600">SDM</span> Portal</h1>
+            <button onclick="location.reload()" class="text-gray-500 hover:text-blue-600">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-700 to-indigo-900 text-white p-6 rounded-3xl shadow-xl">
+            <div class="flex justify-between items-start mb-4">
+                <span id="display-date" class="bg-blue-500/30 px-3 py-1 rounded-full text-xs font-semibold">Sunday, 26 April</span>
+                <i class="fa-solid fa-bullseye text-yellow-400"></i>
+            </div>
+            <h2 id="topic-title" class="text-3xl font-bold mb-2">Ancient India</h2>
+            <p id="subtopic-text" class="text-blue-100 text-sm leading-relaxed mb-4">
+                Prehistory, Indus Valley: town planning, economy, and art.
+            </p>
+            <div class="flex items-center space-x-2 text-xs text-blue-200">
+                <i class="fa-solid fa-book-open"></i>
+                <span id="reference-text">NCERT 6-12 + RS Sharma</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-5 shadow-sm border border-gray-100">
+            <div class="flex justify-between mb-2 text-sm font-semibold text-gray-600">
+                <span>Consistency Meter</span>
+                <span id="progress-percent">0.8%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-fill" class="bg-green-500 h-2.5 rounded-full progress-bar" style="width: 0.8%"></div>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-2 italic">Status: <span id="status-text" class="text-green-600 font-bold">On Fire 🔥</span></p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fa-solid fa-link text-blue-500 mr-2"></i>Related Context</h3>
+            <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                <p id="related-topic" class="text-sm text-blue-800 font-medium">Art & Culture (Post-Mauryan), UP History (Belan Valley)</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fa-solid fa-pen-to-square text-orange-500 mr-2"></i>Daily MCQ</h3>
+            <p id="mcq-question" class="text-gray-600 text-sm mb-4">Which site in UP provides evidence of the transition from Neolithic to Bronze Age?</p>
+            <button onclick="toggleAnswer()" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold transition">
+                Show Answer
+            </button>
+            <p id="mcq-answer" class="hidden mt-3 p-3 bg-green-50 text-green-700 text-xs font-bold rounded-lg border border-green-100">
+                Correct Answer: Lahuradewa (Sant Kabir Nagar)
+            </p>
+        </div>
+
+        <button onclick="markDone()" class="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-transform">
+            Mark Today as Completed ✅
+        </button>
+    </div>
+
+    <script>
+        // Data derived from your UPPSC Plan
+        const studyData = {
+            date: "2026-04-26",
+            topic: "Ancient India",
+            subtopic: "Prehistory, Indus Valley: town planning, economy, art",
+            ref: "NCERT 6-12 + RS Sharma",
+            related: "Art & Culture (Temple Arch.), UP History (Belan Valley)",
+            mcq: "Which Harappan site in UP is known for its evidence of cotton cloth?",
+            ans: "Alamgirpur (Meerut)",
+            progress: "0.8%"
+        };
+
+        // Initialize UI
+        document.getElementById('topic-title').innerText = studyData.topic;
+        document.getElementById('subtopic-text').innerText = studyData.subtopic;
+        document.getElementById('reference-text').innerText = studyData.ref;
+        document.getElementById('related-topic').innerText = studyData.related;
+        document.getElementById('mcq-question').innerText = studyData.mcq;
+        document.getElementById('mcq-answer').innerText = "Ans: " + studyData.ans;
+
+        function toggleAnswer() {
+            const ans = document.getElementById('mcq-answer');
+            ans.classList.toggle('hidden');
         }
-    }
-    return insights.get(topic, {
-        "MCQ": "Solve 20 PYQs from Ghatna Chakra for this topic.",
-        "Long": "Write one 125-word answer focusing on UP-specific examples.",
-        "Concurrent": "Link this topic to a recent scheme mentioned in the 'UP News' section."
-    })
 
-def render_dashboard(date_str, file_path):
-    df = pd.read_csv(file_path)
-    df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
-    day_data = df[df['Date'] == date_str]
-    
-    if day_data.empty: return "Relax! No schedule for today."
-    
-    row = day_data.iloc[0]
-    done = df['Status'].count()
-    progress = (done / len(df)) * 100
-    insight = get_uppsc_insights(row['Topic'])
-
-    return f"""
-📱 **UPPSC SDM TRACKER**
-----------------------------------
-📅 **DATE:** {date_str}
-🎯 **TARGET:** {row['Topic']}
-📍 **FOCUS:** {row['Subtopic (Granular)']}
-
-📊 **TRACKER**
-- Progress: [{('#' * int(progress/10)).ljust(10, '.')}] {progress:.1f}%
-- Consistency: {'🔥 High' if progress > 5 else '🧊 Warming Up'}
-- Task: {'✅ DONE' if pd.notnull(row['Status']) else '⏳ PENDING'}
-
-📝 **EXAM SIMULATOR**
-- **Prelims:** {insight['MCQ']}
-- **Mains:** {insight['Long']}
-
-💡 **UP INSIGHT:** {insight.get('Concurrent', 'Check UP Government PR site.')}
-
-🚀 **ACTION:** {row['Daily Answer Practice']}
-----------------------------------
-"""
-
-# Example for the first day
-print(render_dashboard('2026-04-26', 'Updated_UPPSC_Ranker_Plan.csv'))
+        function markDone() {
+            alert("Congratulations! Target for " + studyData.topic + " achieved.");
+            document.getElementById('status-text').innerText = "Goal Met! 🏆";
+        }
+    </script>
+</body>
+</html>
