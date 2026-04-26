@@ -3,110 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPPSC SDM RANKER PORTAL</title>
+    <title>UPPSC Ranker Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="upsc_data_v3.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
-        body { font-family: 'Outfit', sans-serif; background: #f1f5f9; }
-        .up-special-card { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); }
-        .gs-card { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .card-up { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }
+        .card-gs { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
     </style>
 </head>
-<body class="p-4">
-    <div class="max-w-md mx-auto">
-        <div class="flex justify-between items-center mb-6">
+<body class="p-4 md:p-10">
+    <div class="max-w-md mx-auto space-y-6">
+        
+        <div class="flex justify-between items-end">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">UPPSC <span class="text-orange-600">SDM</span></h1>
-                <p class="text-[10px] tracking-widest text-slate-500 font-bold uppercase">Ranker Tracking Portal</p>
+                <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Target Ranker Portal</p>
             </div>
-            <div id="consistency-tag" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">
-                CONSISTENT 🔥
+            <div class="text-right">
+                <span id="sync-status" class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">DATA SYNCED ✅</span>
             </div>
         </div>
 
-        <div id="task-container" class="gs-card text-white p-6 rounded-[2.5rem] shadow-2xl mb-6 transition-all">
-            <div class="flex justify-between items-start">
-                <span id="date-text" class="bg-white/20 px-3 py-1 rounded-full text-[10px]">Date: 2026-04-26</span>
-                <span id="paper-badge" class="font-bold text-yellow-400 text-sm">GS-I</span>
-            </div>
-            
-            <h2 id="topic-title" class="text-3xl font-bold mt-4 leading-tight">Loading Plan...</h2>
-            <p id="subtopic-detail" class="text-blue-100 text-sm mt-2 opacity-90 italic">Data is being synced...</p>
-            
-            <div class="mt-8 grid grid-cols-2 gap-3">
-                <div class="bg-white/10 p-3 rounded-2xl border border-white/5">
-                    <p class="text-[9px] opacity-60 uppercase">Revision</p>
-                    <p class="text-xs font-bold">D1/D7/D21 Mode</p>
+        <div id="main-card" class="card-gs text-white p-6 rounded-[2rem] shadow-xl shadow-blue-200/50 relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex justify-between items-center mb-4">
+                    <span id="display-date" class="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold">2026-04-26</span>
+                    <span id="paper-badge" class="font-bold text-yellow-300 text-xs tracking-widest uppercase">GS-I</span>
                 </div>
-                <div class="bg-white/10 p-3 rounded-2xl border border-white/5">
-                    <p class="text-[9px] opacity-60 uppercase">Progress</p>
-                    <p id="progress-val" class="text-xs font-bold">Calculating...</p>
+                <h2 id="topic-title" class="text-3xl font-bold mb-2">Loading...</h2>
+                <p id="subtopic-text" class="text-blue-50 text-sm opacity-90 italic mb-6">Fetching details from v3...</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-black/10 p-3 rounded-2xl border border-white/10">
+                        <p class="text-[9px] uppercase opacity-70">Progress</p>
+                        <p id="prog-val" class="text-xs font-bold">0%</p>
+                    </div>
+                    <div class="bg-black/10 p-3 rounded-2xl border border-white/10">
+                        <p class="text-[9px] uppercase opacity-70">Consistency</p>
+                        <p class="text-xs font-bold">🔥 100%</p>
+                    </div>
                 </div>
             </div>
+            <div class="absolute -right-4 -bottom-4 opacity-10 text-8xl font-black italic">SDM</div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 mb-6">
-            <h3 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Related Topic Insight</h3>
-            <div class="flex gap-3 items-start">
-                <div class="bg-orange-100 p-2 rounded-xl text-orange-600">⚡</div>
-                <p id="related-insight" class="text-sm text-slate-700 font-medium">Link this with UP Special Current Affairs.</p>
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Today's Practice</h3>
+            <div class="space-y-4">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <p id="meta-text" class="text-sm text-slate-700 font-medium italic text-center">Loading MCQs...</p>
+                </div>
+                <button onclick="alert('Check Source: ' + document.getElementById('ref-text').innerText)" class="w-full py-3 bg-slate-900 text-white rounded-2xl text-xs font-bold active:scale-95 transition">
+                    View Reference Book
+                </button>
+                <p id="ref-text" class="hidden"></p>
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 mb-6">
-            <h4 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Prelims MCQ Challenge</h4>
-            <p id="mcq-q" class="text-slate-800 text-sm font-semibold mb-4 leading-relaxed">No question found.</p>
-            <button onclick="reveal()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
-                Check Correct Answer
-            </button>
-            <div id="ans-box" class="hidden mt-3 p-3 bg-green-50 text-green-700 text-xs font-bold rounded-xl text-center border border-green-100">
-                Answer: <span id="mcq-a">-</span>
-            </div>
-        </div>
-
-        <button onclick="markDone()" class="w-full py-5 bg-slate-900 text-white rounded-[2rem] font-bold shadow-xl active:scale-95 transition-transform">
-            Complete Today's Topic ✅
+        <button onclick="markDone()" class="w-full py-5 bg-white border-2 border-slate-900 text-slate-900 rounded-[2rem] font-bold text-sm shadow-sm hover:bg-slate-50 active:scale-95 transition-all">
+            Mark Topic as Completed ✅
         </button>
+
     </div>
 
     <script>
-        // Critical: Linking your uploaded 'upsc_data_v3.js'
-        function syncDashboard() {
-            // Hum aaj ki date check kar rahe hain (Plan 2026 ke hisab se setup hai)
-            const target = "2026-04-26"; 
-            const dayData = studyPlan.find(d => d.date === target) || studyPlan[0];
+        function renderDashboard() {
+            if (typeof studyPlan === 'undefined') {
+                document.getElementById('topic-title').innerText = "Data Error";
+                document.getElementById('subtopic-text').innerText = "upsc_data_v3.js missing in folder.";
+                document.getElementById('sync-status').innerText = "SYNC FAILED ❌";
+                document.getElementById('sync-status').className = "text-[10px] bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold";
+                return;
+            }
 
-            if (dayData) {
-                document.getElementById('topic-title').innerText = dayData.topic;
-                document.getElementById('subtopic-detail').innerText = dayData.subtopic;
-                document.getElementById('paper-badge').innerText = dayData.paper;
-                document.getElementById('date-text').innerText = "Date: " + dayData.date;
-                document.getElementById('mcq-q').innerText = dayData.mcq;
-                document.getElementById('mcq-a').innerText = dayData.ans;
-                document.getElementById('related-insight').innerText = "Related to: " + (dayData.related || "UP General Studies");
-                
-                // Consistency & Progress
-                const idx = studyPlan.indexOf(dayData) + 1;
-                const prog = ((idx / studyPlan.length) * 100).toFixed(1);
-                document.getElementById('progress-val').innerText = prog + "% Done";
+            // Detect current date or default to start of plan
+            const todayDate = new Date().toISOString().split('T')[0];
+            let data = studyPlan.find(d => d.Date === todayDate);
+            
+            // If today is not in plan (since plan starts in 2026), show Day 1
+            if (!data) { data = studyPlan[0]; }
 
-                // UP Special Focus: Paper V and VI logic
-                if (dayData.paper === 'GS-V' || dayData.paper === 'GS-VI') {
-                    document.getElementById('task-container').className = "up-special-card text-white p-6 rounded-[2.5rem] shadow-2xl mb-6 transition-all";
-                }
+            const index = studyPlan.indexOf(data) + 1;
+            const progress = ((index / studyPlan.length) * 100).toFixed(1);
+
+            document.getElementById('display-date').innerText = data.Date;
+            document.getElementById('paper-badge').innerText = data.Paper;
+            document.getElementById('topic-title').innerText = data.Topic;
+            document.getElementById('subtopic-text').innerText = data["Subtopic (Granular)"];
+            document.getElementById('prog-val').innerText = progress + "%";
+            document.getElementById('meta-text').innerText = data.Metadata;
+            document.getElementById('ref-text').innerText = data.Reference;
+
+            // Change color for UP Special Papers (GS-V and VI)
+            if (data.Paper.includes('GS-V') || data.Paper.includes('GS-VI')) {
+                document.getElementById('main-card').classList.replace('card-gs', 'card-up');
             }
         }
 
-        function reveal() {
-            document.getElementById('ans-box').classList.toggle('hidden');
-        }
-
         function markDone() {
-            alert("Goal Achieved for " + document.getElementById('topic-title').innerText + "! SDM Journey Continues.");
+            alert("Topic Saved! Your progress is now " + document.getElementById('prog-val').innerText);
         }
 
-        window.onload = syncDashboard;
+        window.onload = renderDashboard;
     </script>
 </body>
 </html>
